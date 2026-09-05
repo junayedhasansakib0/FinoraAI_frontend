@@ -1,0 +1,47 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Instrument Sans carries the interface; Newsreader carries editorial statements. */
+  --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-serif: 'Newsreader', ui-serif, Georgia, 'Times New Roman', serif;
+
+  --text-display: 3.25rem;
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.02em;
+
+  /* Petrol ink — the brand's near-black, cool rather than warm. */
+  --color-ink: #0c2a31;
+  --color-ink-soft: #123a47;
+  --color-muted: #4f7078;
+  --color-line: #c4d2d5;
+  --color-paper: #f5f6f7;
+  --color-brass: #c9a227;
+
+  /* Money direction. These three carry meaning and are never used as decoration. */
+  --color-income: #0e7a5f;
+  --color-expense: #a8322a;
+  --color-warning: #b25e09;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-brass);
+    color: var(--color-ink);
+  }
+}

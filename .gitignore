@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Environment — only the example file is committed
+.env
+.env.*
+!.env.example
+
+# Build output
+dist/
+dist-ssr/
+*.local
+
+# Tooling caches
+.vite/
+coverage/
+
+# Editors and OS
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*

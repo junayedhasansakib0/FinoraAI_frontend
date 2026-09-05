@@ -62,3 +62,40 @@ export function describeApiFailure(error: unknown): { code: string; message: str
 
   return { code: NETWORK_ERROR_CODE, message: describeRequestFailure(error) };
 }
+
+/** One predicate about one field, as `VALIDATION_ERROR` and friends carry them (§7, R-V6). */
+export interface ApiFieldError {
+  field: string;
+  message: string;
+}
+
+function isFieldErrorList(value: unknown): value is ApiFieldError[] {
+  return (
+    Array.isArray(value) &&
+    value.every((entry: unknown) => {
+      if (typeof entry !== 'object' || entry === null) {
+        return false;
+      }
+
+      const candidate = entry as Partial<ApiFieldError>;
+
+      return typeof candidate.field === 'string' && typeof candidate.message === 'string';
+    })
+  );
+}
+
+/**
+ * The field-level half of a rejected write, so a form can put each message on the input that
+ * caused it (R-F3). Empty when the failure was not about specific fields.
+ */
+export function describeFieldErrors(error: unknown): ApiFieldError[] {
+  if (axios.isAxiosError(error)) {
+    const body: unknown = error.response?.data;
+
+    if (isApiFailure(body) && isFieldErrorList(body.error.details)) {
+      return body.error.details;
+    }
+  }
+
+  return [];
+}

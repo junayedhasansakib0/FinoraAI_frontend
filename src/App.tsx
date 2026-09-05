@@ -1,3 +1,4 @@
+import { QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 
 import { SessionLoading } from '@/components/states/SessionLoading';
@@ -5,13 +6,15 @@ import { AuthProvider } from '@/context/AuthContext';
 import { useAuth } from '@/context/auth-context';
 import { ProtectedRoute, PublicOnlyRoute } from '@/features/auth/RouteGuards';
 import { ROUTES } from '@/lib/constants';
+import { queryClient } from '@/lib/query-client';
 import LoginPage from '@/pages/LoginPage';
 import RegisterPage from '@/pages/RegisterPage';
-import ScaffoldPage from '@/pages/ScaffoldPage';
+import TransactionsPage from '@/pages/TransactionsPage';
 
 /**
  * Routing waits for the boot session check, so a guard never redirects on an unknown session.
- * `/` is the signed-in placeholder until Phase 5 moves the app under `/app/*`.
+ * `/` is where a signed-in person belongs, which for now is the ledger; Phase 13 gives that slot
+ * to the landing page and the dashboard.
  */
 function AppRoutes() {
   const { isRestoringSession } = useAuth();
@@ -28,7 +31,8 @@ function AppRoutes() {
       </Route>
 
       <Route element={<ProtectedRoute />}>
-        <Route path={ROUTES.home} element={<ScaffoldPage />} />
+        <Route path={ROUTES.home} element={<Navigate to={ROUTES.transactions} replace />} />
+        <Route path={ROUTES.transactions} element={<TransactionsPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to={ROUTES.home} replace />} />
@@ -38,10 +42,12 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 }

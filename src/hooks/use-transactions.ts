@@ -8,6 +8,7 @@ import {
   type TransactionFilters,
   type TransactionInput,
 } from '@/api/transactions';
+import { dashboardKeys } from '@/hooks/use-dashboard';
 
 /**
  * Server state for `/transactions` (ARCHITECTURE.md §3). The filter set is part of the cache key,
@@ -28,12 +29,20 @@ export function useTransactions(filters: TransactionFilters) {
   });
 }
 
+/** Every write to the ledger changes what the dashboard totals, so both caches are retired. */
+function invalidateLedger(queryClient: ReturnType<typeof useQueryClient>): Promise<void> {
+  return Promise.all([
+    queryClient.invalidateQueries({ queryKey: transactionKeys.all }),
+    queryClient.invalidateQueries({ queryKey: dashboardKeys.all }),
+  ]).then(() => undefined);
+}
+
 export function useCreateTransaction() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (input: TransactionInput) => createTransaction(input),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: transactionKeys.all }),
+    onSuccess: () => invalidateLedger(queryClient),
   });
 }
 
@@ -43,7 +52,7 @@ export function useUpdateTransaction() {
   return useMutation({
     mutationFn: ({ id, input }: { id: string; input: Partial<TransactionInput> }) =>
       updateTransaction(id, input),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: transactionKeys.all }),
+    onSuccess: () => invalidateLedger(queryClient),
   });
 }
 
@@ -52,6 +61,6 @@ export function useDeleteTransaction() {
 
   return useMutation({
     mutationFn: (id: string) => deleteTransaction(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: transactionKeys.all }),
+    onSuccess: () => invalidateLedger(queryClient),
   });
 }

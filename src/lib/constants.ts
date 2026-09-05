@@ -18,10 +18,17 @@ export const REQUEST_TIMEOUT_MS = 15_000;
 
 export const APP_NAME = 'Finora AI';
 
+/**
+ * How many months of history the dashboard charts ask for. The API defaults to the same six and
+ * will not serve more than twelve, so this is the one place the number is chosen (R-N5).
+ */
+export const ANALYTICS_MONTHS = 6;
+
 /** Every path the router knows about, in one place. */
 export const ROUTES = {
   home: '/',
   login: '/login',
   register: '/register',
+  dashboard: '/app/dashboard',
   transactions: '/app/transactions',
 } as const;

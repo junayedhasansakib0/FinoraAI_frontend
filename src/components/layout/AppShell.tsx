@@ -7,7 +7,10 @@ import { APP_NAME, ROUTES } from '@/lib/constants';
 import type { ReactNode } from 'react';
 
 /** Only the routes that exist. Phase 13 replaces this with the sidebar/drawer/bottom-nav shell. */
-const NAV_ITEMS = [{ to: ROUTES.transactions, label: 'Transactions' }] as const;
+const NAV_ITEMS = [
+  { to: ROUTES.dashboard, label: 'Dashboard' },
+  { to: ROUTES.transactions, label: 'Transactions' },
+] as const;
 
 const NAV_LINK_BASE = 'border-b-2 pb-0.5 transition-colors';
 

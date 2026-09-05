@@ -7,6 +7,7 @@ import {
   renameCategory,
   type CreateCategoryInput,
 } from '@/api/categories';
+import { dashboardKeys } from '@/hooks/use-dashboard';
 import { transactionKeys } from '@/hooks/use-transactions';
 
 /**
@@ -32,11 +33,15 @@ export function useCreateCategory() {
   });
 }
 
-/** A rename and a delete both change what the transaction rows show, so both lists refresh. */
-function invalidateBoth(queryClient: ReturnType<typeof useQueryClient>): Promise<void> {
+/**
+ * A rename and a delete both change what the transaction rows show, and a delete moves that
+ * category's spending into the dashboard's uncategorised slice, so all three lists refresh.
+ */
+function invalidateAffected(queryClient: ReturnType<typeof useQueryClient>): Promise<void> {
   return Promise.all([
     queryClient.invalidateQueries({ queryKey: categoryKeys.all }),
     queryClient.invalidateQueries({ queryKey: transactionKeys.all }),
+    queryClient.invalidateQueries({ queryKey: dashboardKeys.all }),
   ]).then(() => undefined);
 }
 
@@ -45,7 +50,7 @@ export function useRenameCategory() {
 
   return useMutation({
     mutationFn: ({ id, name }: { id: string; name: string }) => renameCategory(id, name),
-    onSuccess: () => invalidateBoth(queryClient),
+    onSuccess: () => invalidateAffected(queryClient),
   });
 }
 
@@ -54,6 +59,6 @@ export function useDeleteCategory() {
 
   return useMutation({
     mutationFn: (id: string) => deleteCategory(id),
-    onSuccess: () => invalidateBoth(queryClient),
+    onSuccess: () => invalidateAffected(queryClient),
   });
 }

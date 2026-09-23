@@ -170,3 +170,27 @@ export interface DashboardAnalytics {
   series: AnalyticsPoint[];
   breakdown: CategoryBreakdown;
 }
+
+/** Budget status thresholds (R-D6, ARCHITECTURE.md §7). */
+export type BudgetStatus = 'ok' | 'warning' | 'exceeded';
+
+export interface Budget {
+  id: string;
+  categoryId: string | null;
+  amount: string;
+  month: number;
+  year: number;
+  spent: string;
+  remaining: string;
+  pctUsed: number | null;
+  status: BudgetStatus;
+  categoryName: string | null;
+}
+
+export interface BudgetPayload {
+  budget: Budget;
+}
+
+export interface BudgetsPayload {
+  budgets: Budget[];
+}

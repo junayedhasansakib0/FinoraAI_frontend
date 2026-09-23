@@ -18,6 +18,7 @@ import RegisterPage from '@/pages/RegisterPage';
  */
 const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
 const TransactionsPage = lazy(() => import('@/pages/TransactionsPage'));
+const BudgetsPage = lazy(() => import('@/pages/BudgetsPage'));
 
 /**
  * Routing waits for the boot session check, so a guard never redirects on an unknown session.
@@ -43,6 +44,7 @@ function AppRoutes() {
           <Route path={ROUTES.home} element={<Navigate to={ROUTES.dashboard} replace />} />
           <Route path={ROUTES.dashboard} element={<DashboardPage />} />
           <Route path={ROUTES.transactions} element={<TransactionsPage />} />
+          <Route path={ROUTES.budgets} element={<BudgetsPage />} />
         </Route>
 
         <Route path="*" element={<Navigate to={ROUTES.home} replace />} />

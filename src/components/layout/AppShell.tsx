@@ -10,6 +10,7 @@ import type { ReactNode } from 'react';
 const NAV_ITEMS = [
   { to: ROUTES.dashboard, label: 'Dashboard' },
   { to: ROUTES.transactions, label: 'Transactions' },
+  { to: ROUTES.budgets, label: 'Budgets' },
 ] as const;
 
 const NAV_LINK_BASE = 'border-b-2 pb-0.5 transition-colors';

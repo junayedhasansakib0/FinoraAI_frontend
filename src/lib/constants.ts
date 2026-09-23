@@ -31,4 +31,5 @@ export const ROUTES = {
   register: '/register',
   dashboard: '/app/dashboard',
   transactions: '/app/transactions',
+  budgets: '/app/budgets',
 } as const;

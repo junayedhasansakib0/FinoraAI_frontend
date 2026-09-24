@@ -278,3 +278,75 @@ export interface CurrencyConvertPayload {
   /** The ECB working day the rate belongs to, `YYYY-MM-DD`. */
   date: string;
 }
+
+/**
+ * AI report kinds (ARCHITECTURE.md §7 AI, §8). Each maps to one `/ai` endpoint. The `QA` kind the
+ * server schema allows is Phase 12's business and is deliberately absent here.
+ */
+export const AI_REPORT_TYPES = [
+  'SPENDING_ANALYSIS',
+  'MONTHLY_SUMMARY',
+  'SAVINGS_RECOMMENDATIONS',
+  'BUDGET_RECOMMENDATIONS',
+] as const;
+
+export type AiReportType = (typeof AI_REPORT_TYPES)[number];
+
+/**
+ * The validated shapes of `AiReport.content`, one per kind (server: `reports.schema.ts`). Every
+ * field is a plain string or list of strings so the client renders them as text, never HTML
+ * (R-I4/R-I5). Content still arrives typed as `unknown` on the wire and is narrowed before render.
+ */
+export interface SpendingAnalysisContent {
+  summary: string;
+  spendingPatterns: string[];
+  notableCategories: string[];
+  savingsOpportunities: string[];
+}
+
+export interface MonthlySummaryContent {
+  summary: string;
+  observations: string[];
+  recommendations: string[];
+}
+
+export interface SavingsRecommendationsContent {
+  summary: string;
+  recommendations: string[];
+  goalNotes: string[];
+}
+
+/** One suggested budget line; `amount` is a plain display string, never used for client math (R-B3). */
+export interface SuggestedBudget {
+  category: string;
+  amount: string;
+  rationale: string;
+}
+
+export interface BudgetRecommendationsContent {
+  summary: string;
+  suggestedBudgets: SuggestedBudget[];
+  adjustments: string[];
+}
+
+/**
+ * A generated AI report as it comes off the wire (§7). `content` is the model's validated output —
+ * always rendered as plain text (R-I5). `disclaimer` rides on every report so the "informational,
+ * not advice" line cannot be dropped (R-I5). `cached` is true when the row was reused rather than
+ * freshly generated (the 24h reuse rule, R-I6).
+ */
+export interface AiReport {
+  id: string;
+  type: AiReportType;
+  /** Narrowed to the matching *Content interface at render time; untrusted until then (R-I4). */
+  content: unknown;
+  /** ISO-8601 timestamp. */
+  createdAt: string;
+  disclaimer: string;
+  cached: boolean;
+}
+
+/** `GET /ai/reports` payload: the user's recent reports, newest first. */
+export interface AiReportsPayload {
+  reports: AiReport[];
+}

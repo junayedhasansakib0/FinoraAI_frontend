@@ -35,4 +35,5 @@ export const ROUTES = {
   goals: '/app/goals',
   currency: '/app/currency',
   crypto: '/app/crypto',
+  ai: '/app/ai',
 } as const;

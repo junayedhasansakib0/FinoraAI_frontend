@@ -14,6 +14,7 @@ const NAV_ITEMS = [
   { to: ROUTES.goals, label: 'Goals' },
   { to: ROUTES.currency, label: 'Currency' },
   { to: ROUTES.crypto, label: 'Crypto' },
+  { to: ROUTES.ai, label: 'AI Insights' },
 ] as const;
 
 const NAV_LINK_BASE = 'border-b-2 pb-0.5 transition-colors';

@@ -32,4 +32,7 @@ export const ROUTES = {
   dashboard: '/app/dashboard',
   transactions: '/app/transactions',
   budgets: '/app/budgets',
+  goals: '/app/goals',
+  currency: '/app/currency',
+  crypto: '/app/crypto',
 } as const;

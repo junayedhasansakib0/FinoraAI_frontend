@@ -19,6 +19,9 @@ import RegisterPage from '@/pages/RegisterPage';
 const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
 const TransactionsPage = lazy(() => import('@/pages/TransactionsPage'));
 const BudgetsPage = lazy(() => import('@/pages/BudgetsPage'));
+const GoalsPage = lazy(() => import('@/pages/GoalsPage'));
+const CurrencyPage = lazy(() => import('@/pages/CurrencyPage'));
+const CryptoPage = lazy(() => import('@/pages/CryptoPage'));
 
 /**
  * Routing waits for the boot session check, so a guard never redirects on an unknown session.
@@ -45,6 +48,9 @@ function AppRoutes() {
           <Route path={ROUTES.dashboard} element={<DashboardPage />} />
           <Route path={ROUTES.transactions} element={<TransactionsPage />} />
           <Route path={ROUTES.budgets} element={<BudgetsPage />} />
+          <Route path={ROUTES.goals} element={<GoalsPage />} />
+          <Route path={ROUTES.currency} element={<CurrencyPage />} />
+          <Route path={ROUTES.crypto} element={<CryptoPage />} />
         </Route>
 
         <Route path="*" element={<Navigate to={ROUTES.home} replace />} />

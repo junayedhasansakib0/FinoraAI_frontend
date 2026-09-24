@@ -194,3 +194,87 @@ export interface BudgetPayload {
 export interface BudgetsPayload {
   budgets: Budget[];
 }
+
+/** A goal is either still being saved for, or its deadline has passed (ARCHITECTURE.md §7). */
+export type GoalDeadlineStatus = 'on-track' | 'past-deadline';
+
+export interface Goal {
+  id: string;
+  name: string;
+  /** All money is a two-decimal string; the client formats but never does the arithmetic (R-B3). */
+  targetAmount: string;
+  currentAmount: string;
+  /** Target − current, floored at zero by the server. */
+  remaining: string;
+  /** Percentage of the target reached, capped at 100 even when over-saved. */
+  progressPct: number;
+  /** ISO-8601 instant the goal is due by. */
+  deadline: string;
+  /** Whole days from now to the deadline; negative once the deadline has passed. */
+  daysRemaining: number;
+  deadlineStatus: GoalDeadlineStatus;
+  /** True once the current amount reaches or passes the target. */
+  completed: boolean;
+}
+
+export interface GoalPayload {
+  goal: Goal;
+}
+
+export interface GoalsPayload {
+  goals: Goal[];
+}
+
+/**
+ * Informational crypto market data from CoinGecko, proxied by the server (§7). It is NOT the
+ * user's money-of-record: prices are external reference numbers quoted in USD, so they arrive as
+ * `number`, not the two-decimal money strings the ledger uses. Any figure CoinGecko omits is null.
+ */
+export interface CryptoCoin {
+  id: string;
+  symbol: string;
+  name: string;
+  /** USD spot price; null when the upstream did not quote one. */
+  price: number | null;
+  /** Percentage move over the last 24h, already worked out upstream. */
+  change24h: number | null;
+  marketCap: number | null;
+  /** Market-cap rank, 1 being the largest. */
+  rank: number | null;
+}
+
+export interface CryptoMarketsPayload {
+  coins: CryptoCoin[];
+}
+
+/** A lightweight search hit from `/crypto/search` — enough to name and rank a coin, no price. */
+export interface CryptoSearchCoin {
+  id: string;
+  symbol: string;
+  name: string;
+  rank: number | null;
+}
+
+export interface CryptoSearchPayload {
+  coins: CryptoSearchCoin[];
+}
+
+/**
+ * Currency converter data from Frankfurter, proxied by the server (§7). Rates are ECB reference
+ * numbers quoted against a base currency — informational and NOT real-time — so, like crypto
+ * prices, they arrive as `number`, not the two-decimal money strings the ledger uses (R-B3). All
+ * conversion math is done on the server; the client only formats what it is given.
+ */
+export interface CurrencyRatesPayload {
+  base: string;
+  /** The ECB working day the rates belong to, `YYYY-MM-DD`. */
+  asOf: string;
+  rates: Record<string, number>;
+}
+
+export interface CurrencyConvertPayload {
+  result: number;
+  rate: number;
+  /** The ECB working day the rate belongs to, `YYYY-MM-DD`. */
+  date: string;
+}

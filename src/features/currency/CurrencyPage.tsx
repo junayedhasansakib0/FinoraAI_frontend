@@ -29,6 +29,14 @@ function defaultTo(from: string): string {
   return from === 'EUR' ? 'USD' : 'EUR';
 }
 
+/**
+ * How long rate-backed reads stay fresh (R-L4: external data ≥60s). ECB reference rates are
+ * published once per working day, so this matches the server's own 6-hour Frankfurter cache window
+ * rather than the app's 30s default — the client never re-asks for a figure the API still serves
+ * from cache. The rates are not real-time, so this staleness is expected.
+ */
+const RATES_STALE_MS = 6 * 60 * 60 * 1000;
+
 export function CurrencyPage() {
   const { user } = useAuth();
   const baseCurrency = user?.currency ?? 'USD';
@@ -42,6 +50,7 @@ export function CurrencyPage() {
   const ratesQuery = useQuery({
     queryKey: ['currency', 'rates', 'USD'],
     queryFn: ({ signal }) => fetchCurrencyRates('USD', signal),
+    staleTime: RATES_STALE_MS,
   });
 
   // Enabled only once a conversion has been submitted; keyed by the exact inputs so repeats cache.
@@ -49,6 +58,7 @@ export function CurrencyPage() {
     queryKey: ['currency', 'convert', submitted],
     queryFn: ({ signal }) => convertCurrency(submitted as ConvertParams, signal),
     enabled: submitted !== null,
+    staleTime: RATES_STALE_MS,
   });
 
   const ratesFailure = ratesQuery.isError ? describeApiFailure(ratesQuery.error) : null;

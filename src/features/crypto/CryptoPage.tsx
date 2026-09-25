@@ -24,6 +24,13 @@ import type { CryptoCoin } from '@/types/api';
 /** Matches the ledger's debounce: a typed word costs one request, not one per keystroke. */
 const SEARCH_DELAY_MS = 300;
 
+/**
+ * How long a market read stays fresh (R-L4: external data ≥60s). Aligned to the server's own
+ * CoinGecko cache window (90s), so the client never re-asks for something the API is still serving
+ * from cache. The figures are informational and not real-time, so this staleness is expected.
+ */
+const MARKETS_STALE_MS = 90_000;
+
 /** The server serves the top coins in pages of this size and caps the page number at 10. */
 const PER_PAGE = 50;
 const MAX_PAGE = 10;
@@ -41,6 +48,7 @@ export function CryptoPage() {
   const { data, isPending, isError, error, isFetching, refetch } = useQuery({
     queryKey: ['crypto', 'markets', params],
     queryFn: ({ signal }) => fetchCryptoMarkets(params, signal),
+    staleTime: MARKETS_STALE_MS,
   });
 
   const coins: CryptoCoin[] = data ?? [];

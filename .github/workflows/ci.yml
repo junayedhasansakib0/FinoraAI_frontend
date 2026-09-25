@@ -1,0 +1,35 @@
+# Continuous integration for the Finora SPA (finora-client).
+# One workflow per repository (IMPLEMENTATION.md Phase 17); free for public repositories.
+# The build needs no secrets: VITE_API_BASE_URL is public and falls back to the relative
+# `/api/v1` default when unset (src/lib/constants.ts).
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    name: lint · typecheck · build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build

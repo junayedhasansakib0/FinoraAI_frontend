@@ -60,6 +60,19 @@ npm run dev               # http://localhost:5173
 In development, `/api` is proxied to `http://localhost:5000`, so requests are same-origin and
 cookies work with no extra configuration.
 
+### Production
+
+```bash
+npm ci                                          # reproducible install from the lockfile
+VITE_API_BASE_URL=https://your-api.example.com/api/v1 npm run build   # typecheck + Vite build → dist/
+npm run preview                                 # optional: serve dist/ locally to sanity-check
+```
+
+`npm run build` typechecks and emits a static bundle to `dist/` for any static host (Vercel Hobby).
+`VITE_API_BASE_URL` is inlined at build time and must point at the deployed API's `/api/v1` origin;
+it is a **public** value, never a secret. Configure the host to rewrite unknown routes to
+`index.html` so client-side routing works on refresh.
+
 ## 📜 Scripts
 
 | Script | Purpose |
@@ -103,17 +116,20 @@ tokens (color, type, radii) are declared once in `src/index.css`; no arbitrary h
 
 ## ✅ Status & roadmap
 
-Built in sequential phases (see `IMPLEMENTATION.md`). Screens shipped so far:
+Built in sequential phases (see `IMPLEMENTATION.md`). All screens are shipped:
 
 | Screen | Status |
 | --- | --- |
-| Sign in / register, protected routing | ✅ |
+| Landing page, sign in / register, protected routing | ✅ |
 | Transactions ledger — filter, sort, paginate, category management | ✅ |
 | Dashboard — KPIs, charts, category & trend analytics | ✅ |
 | Budgets — month picker, progress bars, warning/exceeded states | ✅ |
-| Savings goals | ⏳ next |
-| Currency & crypto tools | 🔜 |
-| AI insights & Q&A, landing page | 🔜 |
+| Savings goals — progress bars, deadline status | ✅ |
+| Currency & crypto tools (cached reference data, never real-time) | ✅ |
+| AI insights & Q&A | ✅ |
+
+Continuous integration runs on every push and pull request
+(`.github/workflows/ci.yml`): **lint → typecheck → build**, free for public repositories.
 
 ## 📚 Documentation
 

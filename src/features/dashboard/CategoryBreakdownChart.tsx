@@ -2,7 +2,7 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 
 import { ChartFrame } from '@/components/charts/ChartFrame';
 import { ChartTooltip } from '@/components/charts/ChartTooltip';
-import { CATEGORY_COLORS, REMAINDER_COLOR } from '@/components/charts/colors';
+import { CATEGORY_COLORS, CHART_PAPER, REMAINDER_COLOR } from '@/components/charts/colors';
 import { formatMoney, formatMonthLong, formatPercent } from '@/lib/format';
 
 import type { ChartTableRow } from '@/components/charts/ChartFrame';
@@ -148,7 +148,7 @@ export function CategoryBreakdownChart({ breakdown, currency }: CategoryBreakdow
             outerRadius="88%"
             paddingAngle={1}
             /* The paper colour, so the gap between slices reads as a gap rather than a grey ring. */
-            stroke="#f5f6f7"
+            stroke={CHART_PAPER}
             strokeWidth={2}
             isAnimationActive={false}
           >

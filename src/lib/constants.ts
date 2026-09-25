@@ -24,6 +24,13 @@ export const APP_NAME = 'Finora AI';
  */
 export const ANALYTICS_MONTHS = 6;
 
+/**
+ * The longest question the AI Chat accepts (ARCHITECTURE.md §7). Mirrors the server's
+ * `AI_CHAT_QUESTION_MAX`; the client caps first so an over-long question never leaves the browser,
+ * and the server still enforces it (R-V1). Kept in step with the contract by hand (R-N7).
+ */
+export const AI_CHAT_QUESTION_MAX = 500;
+
 /** Every path the router knows about, in one place. */
 export const ROUTES = {
   home: '/',
@@ -36,4 +43,7 @@ export const ROUTES = {
   currency: '/app/currency',
   crypto: '/app/crypto',
   ai: '/app/ai',
+  aiChat: '/app/ai/chat',
+  analytics: '/app/analytics',
+  settings: '/app/settings',
 } as const;

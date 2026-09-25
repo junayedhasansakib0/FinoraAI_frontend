@@ -17,6 +17,9 @@ export const CHART_LINE = '#c4d2d5';
 /** Axis tick labels, at the same muted weight as the small print around them. */
 export const CHART_TEXT = '#4f7078';
 
+/** The page background (`--color-paper`), used to draw the gap between adjacent pie slices. */
+export const CHART_PAPER = '#f5f6f7';
+
 /**
  * Category slices, in the order they are handed out. A category is an identity rather than a
  * direction, so these deliberately avoid the income, expense and warning colours: borrowing one

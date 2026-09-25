@@ -18,6 +18,18 @@ export interface LoginPayload {
   password: string;
 }
 
+/** At least one field must be present; the server rejects an empty body (§7). */
+export interface UpdateProfilePayload {
+  name?: string;
+  currency?: string;
+  timezone?: string;
+}
+
+export interface ChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+}
+
 export async function registerAccount(payload: RegisterPayload) {
   const response = await apiClient.post<ApiSuccess<SessionPayload>>('/auth/register', payload);
 
@@ -32,6 +44,26 @@ export async function login(payload: LoginPayload) {
 
 export async function fetchCurrentUser(signal?: AbortSignal) {
   const response = await apiClient.get<ApiSuccess<SessionPayload>>('/auth/me', { signal });
+
+  return response.data.data.user;
+}
+
+export async function updateProfile(payload: UpdateProfilePayload) {
+  const response = await apiClient.patch<ApiSuccess<SessionPayload>>('/auth/profile', payload);
+
+  return response.data.data.user;
+}
+
+/**
+ * Changing the password bumps the account's `tokenVersion`, retiring every refresh token already
+ * issued. The API re-issues fresh cookies for this caller in the same response (§7), so the session
+ * the change was made from stays signed in; only other devices are logged out.
+ */
+export async function changePassword(payload: ChangePasswordPayload) {
+  const response = await apiClient.post<ApiSuccess<SessionPayload>>(
+    '/auth/change-password',
+    payload,
+  );
 
   return response.data.data.user;
 }

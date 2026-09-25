@@ -1,6 +1,6 @@
 import { apiClient } from './client';
 
-import type { AiReport, AiReportsPayload, ApiSuccess } from '@/types/api';
+import type { AiReport, AiReportsPayload, ApiSuccess, ChatAnswer } from '@/types/api';
 
 /**
  * `/ai` calls (ARCHITECTURE.md §7). Four POSTs each turn the user's ledger into one report and one
@@ -81,4 +81,16 @@ export async function listReports(
   });
 
   return response.data.data.reports;
+}
+
+/**
+ * Ask a free-text financial question (Phase 12, §7). The server grounds the answer in the user's
+ * aggregates only (R-I1), validates and caps it (R-I4), and persists the exchange as a QA report;
+ * the client sends the question and renders the returned answer as plain text (R-I5). Same errors as
+ * the reports: 422 no data, 429 quota, 503 AI unavailable.
+ */
+export async function postChat(question: string): Promise<ChatAnswer> {
+  const response = await apiClient.post<ApiSuccess<ChatAnswer>>('/ai/chat', { question });
+
+  return response.data.data;
 }

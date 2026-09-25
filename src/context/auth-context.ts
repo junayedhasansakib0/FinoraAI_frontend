@@ -16,6 +16,11 @@ export interface AuthContextValue {
   signIn: (payload: LoginPayload) => Promise<void>;
   signUp: (payload: RegisterPayload) => Promise<void>;
   signOut: () => Promise<void>;
+  /**
+   * Replaces the in-memory user after a profile or password change, so the header and every
+   * currency-formatted figure reflect the new values without a page reload.
+   */
+  applyUser: (user: AuthUser) => void;
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null);

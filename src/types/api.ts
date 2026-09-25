@@ -293,6 +293,18 @@ export const AI_REPORT_TYPES = [
 export type AiReportType = (typeof AI_REPORT_TYPES)[number];
 
 /**
+ * The Q&A kind (Phase 12): produced by `POST /ai/chat` from a free-text question, never by the four
+ * report generators, so it is deliberately kept out of `AI_REPORT_TYPES`. It appears only in stored
+ * history, which is why the history filter and `AiReport.type` below span it via `AiReportHistoryType`.
+ */
+export const QA_REPORT_TYPE = 'QA' as const;
+
+/** Every kind that can appear in stored history: the four reports plus QA (ARCHITECTURE.md §7). */
+export const AI_HISTORY_TYPES = [...AI_REPORT_TYPES, QA_REPORT_TYPE] as const;
+
+export type AiReportHistoryType = (typeof AI_HISTORY_TYPES)[number];
+
+/**
  * The validated shapes of `AiReport.content`, one per kind (server: `reports.schema.ts`). Every
  * field is a plain string or list of strings so the client renders them as text, never HTML
  * (R-I4/R-I5). Content still arrives typed as `unknown` on the wire and is narrowed before render.
@@ -330,14 +342,25 @@ export interface BudgetRecommendationsContent {
 }
 
 /**
+ * A stored Q&A exchange's `content` (Phase 12): the question the user asked and the model's answer,
+ * both plain strings the client renders as text, never HTML (R-I4/R-I5). Like report content it
+ * arrives typed as `unknown` on the wire and is narrowed defensively before render.
+ */
+export interface QaContent {
+  question: string;
+  answer: string;
+}
+
+/**
  * A generated AI report as it comes off the wire (§7). `content` is the model's validated output —
  * always rendered as plain text (R-I5). `disclaimer` rides on every report so the "informational,
  * not advice" line cannot be dropped (R-I5). `cached` is true when the row was reused rather than
- * freshly generated (the 24h reuse rule, R-I6).
+ * freshly generated (the 24h reuse rule, R-I6). `type` spans QA because stored history can hold a
+ * Q&A row, whose `content` is a `QaContent` rather than a report `*Content`.
  */
 export interface AiReport {
   id: string;
-  type: AiReportType;
+  type: AiReportHistoryType;
   /** Narrowed to the matching *Content interface at render time; untrusted until then (R-I4). */
   content: unknown;
   /** ISO-8601 timestamp. */
@@ -349,4 +372,15 @@ export interface AiReport {
 /** `GET /ai/reports` payload: the user's recent reports, newest first. */
 export interface AiReportsPayload {
   reports: AiReport[];
+}
+
+/**
+ * `POST /ai/chat` response (Phase 12, §7): the plain-text answer grounded in the user's aggregates,
+ * the id of the persisted QA report, and the disclaimer that rides on every AI response (R-I5). The
+ * answer is rendered as text, never HTML (R-I4/R-I5).
+ */
+export interface ChatAnswer {
+  answer: string;
+  reportId: string;
+  disclaimer: string;
 }

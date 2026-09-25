@@ -23,11 +23,15 @@ const GoalsPage = lazy(() => import('@/pages/GoalsPage'));
 const CurrencyPage = lazy(() => import('@/pages/CurrencyPage'));
 const CryptoPage = lazy(() => import('@/pages/CryptoPage'));
 const AiInsightsPage = lazy(() => import('@/pages/AiInsightsPage'));
+const AiChatPage = lazy(() => import('@/pages/AiChatPage'));
+const AnalyticsPage = lazy(() => import('@/pages/AnalyticsPage'));
+const SettingsPage = lazy(() => import('@/pages/SettingsPage'));
+const LandingPage = lazy(() => import('@/pages/LandingPage'));
 
 /**
  * Routing waits for the boot session check, so a guard never redirects on an unknown session.
- * `/` is where a signed-in person belongs, which is the dashboard; Phase 13 gives that slot to the
- * landing page and moves the redirect behind the guard.
+ * `/` is the public landing page and adapts its calls to action to the session; signed-in visitors
+ * reach their real routes under `/app/*` behind `ProtectedRoute`.
  */
 function AppRoutes() {
   const { isRestoringSession } = useAuth();
@@ -39,13 +43,14 @@ function AppRoutes() {
   return (
     <Suspense fallback={<RouteLoading />}>
       <Routes>
+        <Route path={ROUTES.home} element={<LandingPage />} />
+
         <Route element={<PublicOnlyRoute />}>
           <Route path={ROUTES.login} element={<LoginPage />} />
           <Route path={ROUTES.register} element={<RegisterPage />} />
         </Route>
 
         <Route element={<ProtectedRoute />}>
-          <Route path={ROUTES.home} element={<Navigate to={ROUTES.dashboard} replace />} />
           <Route path={ROUTES.dashboard} element={<DashboardPage />} />
           <Route path={ROUTES.transactions} element={<TransactionsPage />} />
           <Route path={ROUTES.budgets} element={<BudgetsPage />} />
@@ -53,6 +58,9 @@ function AppRoutes() {
           <Route path={ROUTES.currency} element={<CurrencyPage />} />
           <Route path={ROUTES.crypto} element={<CryptoPage />} />
           <Route path={ROUTES.ai} element={<AiInsightsPage />} />
+          <Route path={ROUTES.aiChat} element={<AiChatPage />} />
+          <Route path={ROUTES.analytics} element={<AnalyticsPage />} />
+          <Route path={ROUTES.settings} element={<SettingsPage />} />
         </Route>
 
         <Route path="*" element={<Navigate to={ROUTES.home} replace />} />

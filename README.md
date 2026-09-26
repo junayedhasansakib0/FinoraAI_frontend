@@ -63,15 +63,44 @@ cookies work with no extra configuration.
 ### Production
 
 ```bash
-npm ci                                          # reproducible install from the lockfile
-VITE_API_BASE_URL=https://your-api.example.com/api/v1 npm run build   # typecheck + Vite build → dist/
-npm run preview                                 # optional: serve dist/ locally to sanity-check
+npm ci            # reproducible install from the lockfile
+npm run build     # typecheck + Vite build → dist/ (keep VITE_API_BASE_URL relative: /api/v1)
+npm run preview   # optional: serve dist/ locally to sanity-check
 ```
 
 `npm run build` typechecks and emits a static bundle to `dist/` for any static host (Vercel Hobby).
-`VITE_API_BASE_URL` is inlined at build time and must point at the deployed API's `/api/v1` origin;
-it is a **public** value, never a secret. Configure the host to rewrite unknown routes to
-`index.html` so client-side routing works on refresh.
+
+**Keep `VITE_API_BASE_URL` relative (`/api/v1`) in production.** The auth cookies are
+`SameSite=Lax`, so a browser will not attach them to a **cross-site** request — if the bundle
+called the Render origin directly (`https://…onrender.com/api/v1`), the SPA (Vercel) and API
+(Render) would be different sites and every authenticated call would fail. Instead the SPA keeps
+calls same-origin and something forwards `/api` to the real API on each side.
+
+#### Deploy to Vercel (Hobby)
+
+The SPA targets **Vercel Hobby** (free, non-commercial — ARCHITECTURE.md §12). `vercel.json` in
+this repo does two jobs:
+
+- **`/api/*` → Render** — a Vercel *rewrite* (edge proxy, not a redirect) forwards API calls to
+  the backend, so from the browser they stay first-party to the Vercel domain and the Lax cookies
+  ride along. **Edit `vercel.json` and replace `REPLACE_WITH_YOUR_RENDER_HOST.onrender.com` with
+  your real Render host** before the first deploy.
+- **SPA fallback** — every non-asset, non-API path rewrites to `/index.html` so client-side
+  routing survives a refresh.
+
+| Setting | Value |
+| --- | --- |
+| Framework Preset | Vite |
+| Root Directory | *(leave blank — this repo's root is the client)* |
+| Build Command | `npm run build` |
+| Output Directory | `dist` |
+| Install Command | `npm ci` |
+
+Environment variable (Vercel dashboard → Project → Settings → Environment Variables): set
+`VITE_API_BASE_URL` to `/api/v1`, or leave it unset (the app falls back to `/api/v1`). Do **not**
+set it to the Render origin. After deploying, set the API's `CLIENT_ORIGIN` **and** `FRONTEND_URL`
+to the Vercel domain (e.g. `https://finora.vercel.app`) so CORS and the email-verification link
+match.
 
 ## 📜 Scripts
 
@@ -89,7 +118,9 @@ it is a **public** value, never a secret. Configure the host to rewrite unknown 
 Only `VITE_API_BASE_URL` — a **public** value, never a secret. See `.env.example`.
 
 - **Development:** keep the relative `/api/v1` default and let the dev proxy forward it.
-- **Production:** set it to the deployed API base, e.g. `https://api.example.com/api/v1`.
+- **Production:** keep the relative `/api/v1` too, and let `vercel.json` rewrite `/api/*` to the
+  Render API host. This keeps requests same-origin so the API's `SameSite=Lax` cookies work
+  without weakening them (ARCHITECTURE.md §12).
 
 > Anything that is not `VITE_`-prefixed and public-safe belongs in the API, not here.
 

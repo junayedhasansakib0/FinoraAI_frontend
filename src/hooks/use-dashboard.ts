@@ -22,9 +22,19 @@ export function useDashboardSummary() {
   });
 }
 
-export function useDashboardAnalytics(months: number = ANALYTICS_MONTHS) {
+/**
+ * `enabled` gates the request: the verified-email gate (§7) refuses analytics to an unconfirmed
+ * account, so a page that already knows the account is unverified passes `enabled: false` and the
+ * predictably-refused call is never made. A disabled query stays `pending`, so callers must read
+ * `enabled` too before treating `isPending` as "still loading".
+ */
+export function useDashboardAnalytics(
+  months: number = ANALYTICS_MONTHS,
+  options: { enabled?: boolean } = {},
+) {
   return useQuery({
     queryKey: dashboardKeys.analytics(months),
     queryFn: ({ signal }) => fetchDashboardAnalytics(months, signal),
+    enabled: options.enabled ?? true,
   });
 }

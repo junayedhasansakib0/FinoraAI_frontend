@@ -48,6 +48,13 @@ function isApiFailure(value: unknown): value is ApiFailure {
 export const NETWORK_ERROR_CODE = 'NETWORK_ERROR';
 
 /**
+ * The server's verified-email gate answers with this code (ARCHITECTURE.md §7). The client mirrors
+ * the gate so these requests are not made when the account is known-unverified, but a page keeps the
+ * constant to recognise the answer and show its locked state instead of a generic error (R-F5).
+ */
+export const EMAIL_VERIFICATION_REQUIRED_CODE = 'EMAIL_VERIFICATION_REQUIRED';
+
+/**
  * The API writes its `error.message` for the person who will read it (§7), so surface it as
  * sent instead of inventing a second vocabulary on the client.
  */

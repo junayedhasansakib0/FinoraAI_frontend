@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 
-import { verifyEmail } from '@/api/auth';
+import { fetchCurrentUser, verifyEmail } from '@/api/auth';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/context/auth-context';
 import { ROUTES } from '@/lib/constants';
@@ -38,7 +38,7 @@ const COPY: Record<ViewState, { title: string; body: string }> = {
 export function VerifyEmailView() {
   const [params] = useSearchParams();
   const token = params.get('token')?.trim() ?? '';
-  const { user } = useAuth();
+  const { user, applyUser } = useAuth();
   const navigate = useNavigate();
   const started = useRef(false);
   const [state, setState] = useState<ViewState>(() => {
@@ -58,8 +58,24 @@ export function VerifyEmailView() {
     let active = true;
     verifyEmail(token)
       .then((status) => {
-        if (active) {
-          setState(status === 'verified' ? 'verified' : status === 'expired' ? 'expired' : 'invalid');
+        if (!active) {
+          return;
+        }
+        setState(status === 'verified' ? 'verified' : status === 'expired' ? 'expired' : 'invalid');
+
+        // A fresh verification unlocks the verified-only features (Analytics, AI) at once, with no
+        // page reload: refetch the current user and adopt it into the in-memory session so the gate,
+        // which reads `emailVerified`, sees the new value. Fire-and-forget — verification already
+        // succeeded, so a failed refresh must not change the shown result; it only defers the in-app
+        // unlock to the next navigation. Skipped when signed out (nothing to refresh, no failing call).
+        if (status === 'verified' && user !== null) {
+          fetchCurrentUser()
+            .then((refreshed) => {
+              applyUser(refreshed);
+            })
+            .catch(() => {
+              // Stay verified on screen; the unlock lands on the next `GET /auth/me`.
+            });
         }
       })
       .catch(() => {
@@ -71,7 +87,7 @@ export function VerifyEmailView() {
     return () => {
       active = false;
     };
-  }, [state, token]);
+  }, [state, token, user, applyUser]);
 
   const copy = COPY[state];
   const showResend = user !== null && (state === 'expired' || state === 'invalid');

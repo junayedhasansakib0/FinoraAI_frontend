@@ -4,6 +4,9 @@
   /* Instrument Sans carries the interface; Newsreader carries editorial statements. */
   --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-serif: 'Newsreader', ui-serif, Georgia, 'Times New Roman', serif;
+  /* Amiri (SIL OFL) — a naskh face that renders the Uthmani harakat correctly. Used only for the
+     Arabic verse in the Ayah card; the interface otherwise stays on the two Latin faces above. */
+  --font-arabic: 'Amiri', 'Scheherazade New', 'Noto Naskh Arabic', serif;
 
   --text-display: 3.25rem;
   --text-display--line-height: 1.05;

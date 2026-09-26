@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 
-import { describeApiFailure } from '@/api/client';
+import { describeApiFailure, EMAIL_VERIFICATION_REQUIRED_CODE } from '@/api/client';
 import { AppShell } from '@/components/layout/AppShell';
 import { EmptyState } from '@/components/states/EmptyState';
 import { ErrorState } from '@/components/states/ErrorState';
 import { useAuth } from '@/context/auth-context';
+import { FeatureLocked } from '@/features/auth/FeatureLocked';
 import { CategoryBreakdownChart } from '@/features/dashboard/CategoryBreakdownChart';
 import { IncomeExpenseChart } from '@/features/dashboard/IncomeExpenseChart';
 import { NetTrendChart } from '@/features/dashboard/NetTrendChart';
@@ -51,8 +52,12 @@ export default function AnalyticsPage() {
   const currency = user?.currency ?? FALLBACK_CURRENCY;
   const [months, setMonths] = useState<number>(RANGES[0]);
 
-  const analytics = useDashboardAnalytics(months);
+  // Analytics is a verified-only surface (§7). When the account is known-unverified the request is
+  // not made at all (`enabled: false`) — the locked panel is shown in its place.
+  const locked = user !== null && !user.emailVerified;
+  const analytics = useDashboardAnalytics(months, { enabled: !locked });
   const isRetrying = analytics.isFetching;
+  const failure = analytics.error !== null ? describeApiFailure(analytics.error) : null;
 
   return (
     <AppShell>
@@ -65,44 +70,60 @@ export default function AnalyticsPage() {
             </p>
           </div>
 
-          <div
-            role="group"
-            aria-label="Months of history"
-            className="flex shrink-0 border border-line"
-          >
-            {RANGES.map((range) => {
-              const active = range === months;
+          {!locked && (
+            <div
+              role="group"
+              aria-label="Months of history"
+              className="flex shrink-0 border border-line"
+            >
+              {RANGES.map((range) => {
+                const active = range === months;
 
-              return (
-                <button
-                  key={range}
-                  type="button"
-                  aria-pressed={active}
-                  onClick={() => {
-                    setMonths(range);
-                  }}
-                  className={`px-4 py-2 text-sm transition-colors ${
-                    active ? 'bg-ink text-paper' : 'text-muted hover:text-ink'
-                  }`}
-                >
-                  {range} months
-                </button>
-              );
-            })}
-          </div>
+                return (
+                  <button
+                    key={range}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => {
+                      setMonths(range);
+                    }}
+                    className={`px-4 py-2 text-sm transition-colors ${
+                      active ? 'bg-ink text-paper' : 'text-muted hover:text-ink'
+                    }`}
+                  >
+                    {range} months
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </header>
 
-        {analytics.isPending ? (
-          <AnalyticsSkeleton />
-        ) : analytics.error !== null ? (
-          <ErrorState
-            title="Your analytics did not load"
-            message={describeApiFailure(analytics.error).message}
-            retrying={isRetrying}
-            onRetry={() => {
-              void analytics.refetch();
-            }}
+        {locked && user !== null ? (
+          <FeatureLocked
+            title="Analytics are locked"
+            message="Verify your email to unlock your financial insights and analytics."
+            email={user.email}
           />
+        ) : analytics.isPending ? (
+          <AnalyticsSkeleton />
+        ) : failure !== null ? (
+          failure.code === EMAIL_VERIFICATION_REQUIRED_CODE && user !== null ? (
+            <FeatureLocked
+              title="Analytics are locked"
+              message="Verify your email to unlock your financial insights and analytics."
+              email={user.email}
+            />
+          ) : (
+            <ErrorState
+              title="Your analytics did not load"
+              message={failure.message}
+              retrying={isRetrying}
+              onRetry={() => {
+                void analytics.refetch();
+              }}
+            />
+          )
         ) : analytics.data !== undefined && !hasActivity(analytics.data.series) ? (
           <EmptyState
             title="Nothing to chart yet"

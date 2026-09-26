@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -17,12 +17,13 @@ import type { AuthUser } from '@/types/api';
  * request (transport/5xx) reaches the "something went wrong" state. The API is mocked (R-T4).
  */
 
-const { verifyEmail, resendVerification } = vi.hoisted(() => ({
+const { verifyEmail, resendVerification, fetchCurrentUser } = vi.hoisted(() => ({
   verifyEmail: vi.fn(),
   resendVerification: vi.fn(() => Promise.resolve()),
+  fetchCurrentUser: vi.fn(),
 }));
 
-vi.mock('@/api/auth', () => ({ verifyEmail, resendVerification }));
+vi.mock('@/api/auth', () => ({ verifyEmail, resendVerification, fetchCurrentUser }));
 
 const UNVERIFIED: AuthUser = {
   id: 'u1',
@@ -34,13 +35,17 @@ const UNVERIFIED: AuthUser = {
   createdAt: '2026-01-01T00:00:00.000Z',
 };
 
-function renderView({ token, user }: { token?: string; user?: AuthUser | null } = {}) {
+function renderView({
+  token,
+  user,
+  applyUser = () => undefined,
+}: { token?: string; user?: AuthUser | null; applyUser?: (user: AuthUser) => void } = {}) {
   const value: AuthContextValue = {
     user: user ?? null,
     isRestoringSession: false,
     signIn: () => Promise.resolve(),
     signOut: () => Promise.resolve(),
-    applyUser: () => undefined,
+    applyUser,
   };
   const path = token === undefined ? '/verify-email' : `/verify-email?token=${token}`;
 
@@ -64,6 +69,30 @@ describe('VerifyEmailView', () => {
 
     expect(await screen.findByText('Email verified')).toBeInTheDocument();
     expect(verifyEmail).toHaveBeenCalledWith('good-token');
+  });
+
+  it('unlocks verified-only features without a reload by refreshing the session', async () => {
+    verifyEmail.mockResolvedValue('verified');
+    const refreshed: AuthUser = { ...UNVERIFIED, emailVerified: true };
+    fetchCurrentUser.mockResolvedValue(refreshed);
+    const applyUser = vi.fn();
+
+    renderView({ token: 'good-token', user: UNVERIFIED, applyUser });
+
+    expect(await screen.findByText('Email verified')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(applyUser).toHaveBeenCalledWith(refreshed);
+    });
+    // The unlock is an in-memory auth-state update — no full-page reload is ever triggered.
+  });
+
+  it('still confirms even if the session refresh fails, without spending a request when signed out', async () => {
+    verifyEmail.mockResolvedValue('verified');
+    renderView({ token: 'good-token' });
+
+    expect(await screen.findByText('Email verified')).toBeInTheDocument();
+    // Signed-out visitor: there is no session to refresh, so no `GET /auth/me` is made.
+    expect(fetchCurrentUser).not.toHaveBeenCalled();
   });
 
   it('reports an expired token', async () => {

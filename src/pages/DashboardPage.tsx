@@ -13,6 +13,7 @@ import { MonthSummary } from '@/features/dashboard/MonthSummary';
 import { NetTrendChart } from '@/features/dashboard/NetTrendChart';
 import { ProgressMeters } from '@/features/dashboard/ProgressMeters';
 import { RecentTransactions } from '@/features/dashboard/RecentTransactions';
+import { RefreshingIndicator } from '@/features/dashboard/RefreshingIndicator';
 import { useDashboardAnalytics, useDashboardSummary } from '@/hooks/use-dashboard';
 import { ROUTES } from '@/lib/constants';
 import { FALLBACK_CURRENCY } from '@/lib/format';
@@ -63,7 +64,13 @@ export default function DashboardPage() {
         <DashboardSkeleton />
       ) : (
         <div aria-busy={isRetrying} className="space-y-12">
-          <h1 className="font-serif text-3xl sm:text-4xl">Dashboard</h1>
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <h1 className="font-serif text-3xl sm:text-4xl">Dashboard</h1>
+            {/* A background refetch (e.g. after a transaction write) is signalled here so the
+                still-cached figures below are not mistaken for the refreshed ones. The initial
+                load never reaches this branch — it shows `DashboardSkeleton` above. */}
+            <RefreshingIndicator active={failure === null && isRetrying} />
+          </div>
 
           {failure !== null && (
             <ErrorState

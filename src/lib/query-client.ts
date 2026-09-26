@@ -30,6 +30,13 @@ export const queryClient = new QueryClient({
         Math.min(RETRY_BASE_DELAY_MS * 2 ** failureCount, RETRY_MAX_DELAY_MS),
       /** The API is the only source of truth; re-asking inside half a minute buys nothing. */
       staleTime: 30_000,
+      /**
+       * Re-focusing the tab must not fan out a burst of refetches at the high-latency free-tier
+       * DB. Freshness is already guaranteed where it matters: queries still refetch on mount and
+       * whenever a mutation invalidates them (`refetchOnMount` stays on), so the ledger and
+       * dashboard update after a write without paying for a refetch on every window focus.
+       */
+      refetchOnWindowFocus: false,
     },
     mutations: { retry: 0 },
   },

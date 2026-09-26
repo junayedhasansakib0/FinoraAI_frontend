@@ -27,6 +27,7 @@ const AiChatPage = lazy(() => import('@/pages/AiChatPage'));
 const AnalyticsPage = lazy(() => import('@/pages/AnalyticsPage'));
 const SettingsPage = lazy(() => import('@/pages/SettingsPage'));
 const LandingPage = lazy(() => import('@/pages/LandingPage'));
+const VerifyEmailPage = lazy(() => import('@/pages/VerifyEmailPage'));
 
 /**
  * Routing waits for the boot session check, so a guard never redirects on an unknown session.
@@ -44,6 +45,8 @@ function AppRoutes() {
     <Suspense fallback={<RouteLoading />}>
       <Routes>
         <Route path={ROUTES.home} element={<LandingPage />} />
+
+        <Route path={ROUTES.verifyEmail} element={<VerifyEmailPage />} />
 
         <Route element={<PublicOnlyRoute />}>
           <Route path={ROUTES.login} element={<LoginPage />} />

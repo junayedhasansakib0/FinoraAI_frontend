@@ -30,6 +30,12 @@ export interface ChangePasswordPayload {
   newPassword: string;
 }
 
+/**
+ * The outcome of redeeming a verification token (§5). The endpoint always answers 200 with one of
+ * these — never an error — so it reveals nothing and is not an oracle; the client renders the state.
+ */
+export type VerifyEmailStatus = 'verified' | 'expired' | 'invalid';
+
 export async function registerAccount(payload: RegisterPayload) {
   const response = await apiClient.post<ApiSuccess<SessionPayload>>('/auth/register', payload);
 
@@ -70,4 +76,27 @@ export async function changePassword(payload: ChangePasswordPayload) {
 
 export async function logout(): Promise<void> {
   await apiClient.post('/auth/logout');
+}
+
+/**
+ * Redeems a verification token from the emailed link (§5). Resolves to the rendered status; the
+ * server never errors on a bad token, so a rejection here means the request itself failed
+ * (network/5xx), which the caller shows as a generic "try again" state.
+ */
+export async function verifyEmail(token: string): Promise<VerifyEmailStatus> {
+  const response = await apiClient.post<ApiSuccess<{ status: VerifyEmailStatus }>>(
+    '/auth/verify-email',
+    { token },
+  );
+
+  return response.data.data.status;
+}
+
+/**
+ * Asks for a fresh verification email (§5). The API's response is deliberately generic whether or
+ * not the address is a known, unverified account (anti-enumeration), so there is nothing to return;
+ * a rejection is only ever a transport failure or the resend rate limit (429 `RATE_LIMITED`).
+ */
+export async function resendVerification(email: string): Promise<void> {
+  await apiClient.post('/auth/resend-verification', { email });
 }

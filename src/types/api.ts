@@ -25,6 +25,12 @@ export interface AuthUser {
   email: string;
   currency: string;
   timezone: string;
+  /**
+   * Whether the account has confirmed its email address (§5). Login is a soft gate — an unverified
+   * account still signs in — so the client uses this only to surface the unverified state, never to
+   * block. The server is the authority; this is a read-only mirror of what `/auth/*` reports.
+   */
+  emailVerified: boolean;
   /** ISO-8601 timestamp. */
   createdAt: string;
 }

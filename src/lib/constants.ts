@@ -36,6 +36,8 @@ export const ROUTES = {
   home: '/',
   login: '/login',
   register: '/register',
+  /** Public: redeems the token from a verification email (§5). Reachable signed in or out. */
+  verifyEmail: '/verify-email',
   dashboard: '/app/dashboard',
   transactions: '/app/transactions',
   budgets: '/app/budgets',

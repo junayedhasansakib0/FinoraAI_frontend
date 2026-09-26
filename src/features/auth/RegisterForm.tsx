@@ -1,39 +1,66 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router';
 
-import { describeApiFailure } from '@/api/client';
+import { registerAccount } from '@/api/auth';
+import { describeApiFailure, describeFieldErrors } from '@/api/client';
 import { TextField } from '@/components/ui/TextField';
 import { useAuth } from '@/context/auth-context';
+import { ROUTES } from '@/lib/constants';
 
-import { FIELD_LIMITS, PASSWORD_HINT, registerSchema } from './schemas';
+import { CheckEmailNotice } from './CheckEmailNotice';
+import { PasswordStrengthMeter } from './PasswordStrengthMeter';
+import { FIELD_LIMITS, registerSchema } from './schemas';
 
 import type { RegisterValues } from './schemas';
+import type { AuthUser } from '@/types/api';
 
 /** The API answers a taken email with CONFLICT, which belongs on the email field, not above it. */
 const TAKEN_EMAIL_CODE = 'CONFLICT';
+/** The two fields the server attaches validation details to (disposable email, weak/derived password). */
+const FIELD_NAMES = new Set<keyof RegisterValues>(['name', 'email', 'password', 'confirmPassword']);
 
+/**
+ * Registration is now a two-step flow (§5). Creating the account does not sign the person in
+ * straight away: it shows the "check your email" panel first, then activates the session (via
+ * `applyUser`) only when they choose to continue. Verification itself is a soft gate — the account
+ * works unverified — so nothing here blocks on it.
+ */
 export function RegisterForm() {
-  const { signUp } = useAuth();
+  const { applyUser } = useAuth();
+  const navigate = useNavigate();
   const [failure, setFailure] = useState<string | null>(null);
+  const [registered, setRegistered] = useState<AuthUser | null>(null);
   const {
     register,
     handleSubmit,
     setError,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { name: '', email: '', password: '' },
+    defaultValues: { name: '', email: '', password: '', confirmPassword: '' },
   });
 
-  const submit = handleSubmit(async (values) => {
+  const submit = handleSubmit(async ({ name, email, password }) => {
     setFailure(null);
 
     try {
-      await signUp(values);
+      const user = await registerAccount({ name, email, password });
+      setRegistered(user);
     } catch (error) {
-      const { code, message } = describeApiFailure(error);
+      const fieldErrors = describeFieldErrors(error);
+      if (fieldErrors.length > 0) {
+        for (const { field, message } of fieldErrors) {
+          if (FIELD_NAMES.has(field as keyof RegisterValues)) {
+            setError(field as keyof RegisterValues, { message });
+          }
+        }
+        return;
+      }
 
+      const { code, message } = describeApiFailure(error);
       if (code === TAKEN_EMAIL_CODE) {
         setError('email', { message }, { shouldFocus: true });
         return;
@@ -42,6 +69,20 @@ export function RegisterForm() {
       setFailure(message);
     }
   });
+
+  if (registered !== null) {
+    return (
+      <CheckEmailNotice
+        email={registered.email}
+        onContinue={() => {
+          applyUser(registered);
+          void navigate(ROUTES.dashboard, { replace: true });
+        }}
+      />
+    );
+  }
+
+  const password = watch('password');
 
   return (
     <form
@@ -72,15 +113,26 @@ export function RegisterForm() {
           error={errors.email?.message}
           {...register('email')}
         />
+        <div>
+          <TextField
+            label="Password"
+            type="password"
+            autoComplete="new-password"
+            maxLength={FIELD_LIMITS.password}
+            required
+            error={errors.password?.message}
+            {...register('password')}
+          />
+          <PasswordStrengthMeter password={password} />
+        </div>
         <TextField
-          label="Password"
+          label="Confirm"
           type="password"
           autoComplete="new-password"
           maxLength={FIELD_LIMITS.password}
           required
-          hint={PASSWORD_HINT}
-          error={errors.password?.message}
-          {...register('password')}
+          error={errors.confirmPassword?.message}
+          {...register('confirmPassword')}
         />
       </div>
 

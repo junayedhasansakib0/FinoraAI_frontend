@@ -19,7 +19,6 @@ function renderForm(signIn: AuthContextValue['signIn']) {
     user: null,
     isRestoringSession: false,
     signIn,
-    signUp: () => Promise.resolve(),
     signOut: () => Promise.resolve(),
     applyUser: () => undefined,
   };

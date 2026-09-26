@@ -22,6 +22,7 @@ const person: AuthUser = {
   email: 'ada@example.com',
   currency: 'USD',
   timezone: 'UTC',
+  emailVerified: true,
   createdAt: '2026-01-01T00:00:00.000Z',
 };
 
@@ -30,7 +31,6 @@ function authValue(user: AuthUser | null): AuthContextValue {
     user,
     isRestoringSession: false,
     signIn: () => Promise.resolve(),
-    signUp: () => Promise.resolve(),
     signOut: () => Promise.resolve(),
     applyUser: () => undefined,
   };

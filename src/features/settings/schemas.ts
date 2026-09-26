@@ -1,12 +1,15 @@
 import { z } from 'zod';
 
+import { unmetPasswordRules } from '@/features/auth/schemas';
+
 /**
  * Mirrors the profile and password rules in `server/src/modules/auth/auth.validation.ts` (§7). This
- * copy answers the form without a round trip; the server's copy is the one that decides (R-N7).
+ * copy answers the form without a round trip; the server's copy is the one that decides (R-N7). The
+ * new-password strength rules are shared with the register form via `@/features/auth/schemas` so a
+ * change here and a sign-up there never drift apart.
  */
 
 const NAME_MAX = 60;
-const PASSWORD_MIN = 8;
 /** bcrypt reads at most 72 bytes, so the API rejects anything longer. */
 const PASSWORD_MAX = 72;
 
@@ -32,8 +35,16 @@ export const passwordSchema = z
       .max(PASSWORD_MAX, `Use ${String(PASSWORD_MAX)} characters or fewer.`),
     newPassword: z
       .string()
-      .min(PASSWORD_MIN, `Use at least ${String(PASSWORD_MIN)} characters.`)
-      .max(PASSWORD_MAX, `Use ${String(PASSWORD_MAX)} characters or fewer.`),
+      .max(PASSWORD_MAX, `Use ${String(PASSWORD_MAX)} characters or fewer.`)
+      .superRefine((value, ctx) => {
+        const unmet = unmetPasswordRules(value);
+        if (unmet.length > 0) {
+          ctx.addIssue({
+            code: 'custom',
+            message: `Add ${unmet.map((rule) => rule.label.toLowerCase()).join(', ')}.`,
+          });
+        }
+      }),
     confirmPassword: z.string().min(1, 'Re-enter the new password.'),
   })
   .refine((values) => values.newPassword === values.confirmPassword, {
@@ -50,7 +61,9 @@ export const FIELD_LIMITS = {
   password: PASSWORD_MAX,
 } as const;
 
-export const PASSWORD_HINT = `At least ${String(PASSWORD_MIN)} characters. Changing it signs out your other devices.`;
+/** The static note under the new-password field; the live strength meter covers the rules. */
+export const PASSWORD_HINT = 'Changing it signs out your other devices.';
 
 export type ProfileValues = z.infer<typeof profileSchema>;
 export type PasswordValues = z.infer<typeof passwordSchema>;
+

@@ -7,6 +7,7 @@ import { describeApiFailure } from '@/api/client';
 import { Button } from '@/components/ui/Button';
 import { TextField } from '@/components/ui/TextField';
 import { useAuth } from '@/context/auth-context';
+import { PasswordStrengthMeter } from '@/features/auth/PasswordStrengthMeter';
 
 import { FIELD_LIMITS, passwordSchema, PASSWORD_HINT } from './schemas';
 
@@ -26,6 +27,7 @@ export function PasswordForm() {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<PasswordValues>({
     resolver: zodResolver(passwordSchema),
@@ -64,16 +66,19 @@ export function PasswordForm() {
           error={errors.currentPassword?.message}
           {...register('currentPassword')}
         />
-        <TextField
-          label="New"
-          type="password"
-          autoComplete="new-password"
-          hint={PASSWORD_HINT}
-          maxLength={FIELD_LIMITS.password}
-          required
-          error={errors.newPassword?.message}
-          {...register('newPassword')}
-        />
+        <div>
+          <TextField
+            label="New"
+            type="password"
+            autoComplete="new-password"
+            hint={PASSWORD_HINT}
+            maxLength={FIELD_LIMITS.password}
+            required
+            error={errors.newPassword?.message}
+            {...register('newPassword')}
+          />
+          <PasswordStrengthMeter password={watch('newPassword')} />
+        </div>
         <TextField
           label="Confirm"
           type="password"

@@ -3,6 +3,7 @@ import { NavLink } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/context/auth-context';
+import { UnverifiedEmailBanner } from '@/features/auth/UnverifiedEmailBanner';
 import { APP_NAME, ROUTES } from '@/lib/constants';
 
 import type { ReactNode } from 'react';
@@ -161,7 +162,10 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       )}
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">{children}</main>
+      <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">
+        {user !== null && !user.emailVerified && <UnverifiedEmailBanner email={user.email} />}
+        {children}
+      </main>
     </div>
   );
 }

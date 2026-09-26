@@ -3,11 +3,8 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://https://finoraai-backend-zb04.onrender.com/api/:path*"
+      "destination": "https://finoraai-backend-zb04.onrender.com/api/:path*"
     },
-    {
-      "source": "/((?!assets/).*)",
-      "destination": "/index.html"
-    }
+    { "source": "/((?!assets/).*)", "destination": "/index.html" }
   ]
 }

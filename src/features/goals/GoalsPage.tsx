@@ -8,6 +8,7 @@ import { ErrorState } from '@/components/states/ErrorState';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/context/auth-context';
 import { formatMoney, formatTransactionDate, FALLBACK_CURRENCY } from '@/lib/format';
+import { MotivationalQuote } from '@/features/motivation/MotivationalQuote';
 import { ContributeGoalModal } from './ContributeGoalModal';
 import { DeleteGoalModal } from './DeleteGoalModal';
 import { GoalFormModal } from './GoalFormModal';
@@ -61,6 +62,8 @@ export function GoalsPage() {
           Create goal
         </Button>
       </div>
+
+      <MotivationalQuote category="goals" />
 
       {isPending && (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

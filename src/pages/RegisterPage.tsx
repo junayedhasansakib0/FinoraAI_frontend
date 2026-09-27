@@ -6,7 +6,10 @@ import { ROUTES } from '@/lib/constants';
 
 export default function RegisterPage() {
   return (
-    <AuthShell
+    <>
+      {/* React 19 hoists this into <head>; gives /register a unique title vs the shared shell. */}
+      <title>Create your account — Finora AI</title>
+      <AuthShell
       title="Create your account"
       intro="You start with fifteen spending and income categories, ready to edit."
       footer={
@@ -23,5 +26,6 @@ export default function RegisterPage() {
     >
       <RegisterForm />
     </AuthShell>
+    </>
   );
 }

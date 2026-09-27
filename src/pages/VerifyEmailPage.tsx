@@ -9,6 +9,9 @@ import { VerifyEmailView } from '@/features/auth/VerifyEmailView';
 export default function VerifyEmailPage() {
   return (
     <div className="flex min-h-dvh flex-col">
+      {/* Transient token page — React 19 hoists these into <head>: unique title, kept out of the index. */}
+      <title>Verify your email — Finora AI</title>
+      <meta name="robots" content="noindex" />
       <header className="border-b border-line">
         <div className="mx-auto w-full max-w-md px-6 py-4">
           <span className="font-semibold tracking-tight">{APP_NAME}</span>

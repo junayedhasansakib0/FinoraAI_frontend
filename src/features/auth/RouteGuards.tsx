@@ -12,7 +12,18 @@ import { ROUTES } from '@/lib/constants';
 export function ProtectedRoute() {
   const { user } = useAuth();
 
-  return user ? <Outlet /> : <Navigate to={ROUTES.login} replace />;
+  if (!user) {
+    return <Navigate to={ROUTES.login} replace />;
+  }
+
+  // Private product area: React 19 hoists this into <head> so no /app/* screen is indexed
+  // (defense in depth alongside `Disallow: /app/` in robots.txt).
+  return (
+    <>
+      <meta name="robots" content="noindex, nofollow" />
+      <Outlet />
+    </>
+  );
 }
 
 /** Signed-in people have no use for the sign-in or registration pages. */

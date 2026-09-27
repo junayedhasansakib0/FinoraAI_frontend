@@ -390,3 +390,25 @@ export interface ChatAnswer {
   reportId: string;
   disclaimer: string;
 }
+
+/**
+ * Motivational-quote categories (ARCHITECTURE.md §7 Quotes). The card sits on exactly three
+ * sections — Transactions, Budgets and Goals — and the server validates `:category` against this
+ * same set, rejecting anything else with 400. Mirrored by hand from the contract (R-N7).
+ */
+export const MOTIVATIONAL_QUOTE_CATEGORIES = ['transactions', 'budgets', 'goals'] as const;
+
+export type MotivationalQuoteCategory = (typeof MOTIVATIONAL_QUOTE_CATEGORIES)[number];
+
+/**
+ * `GET /quotes/:category` payload (§7). A short, decorative reminder: an AI-generated line when one
+ * is cached, otherwise a curated fallback — `source` says which. `disclaimer` rides on every
+ * response so the "informational, not financial advice" line cannot be dropped (R-I5). The quote is
+ * untrusted text rendered only into a React text node, never HTML (R-I4).
+ */
+export interface QuoteResult {
+  quote: string;
+  category: MotivationalQuoteCategory;
+  source: 'ai' | 'fallback';
+  disclaimer: string;
+}

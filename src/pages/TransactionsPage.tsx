@@ -9,6 +9,7 @@ import { useAuth } from '@/context/auth-context';
 import { CategoryManagerModal } from '@/features/categories-settings/CategoryManagerModal';
 import { DeleteTransactionModal } from '@/features/transactions/DeleteTransactionModal';
 import { DEFAULT_FILTERS, hasActiveFilters } from '@/features/transactions/filters';
+import { MotivationalQuote } from '@/features/motivation/MotivationalQuote';
 import { PaginationBar } from '@/features/transactions/PaginationBar';
 import { TransactionFilters } from '@/features/transactions/TransactionFilters';
 import { TransactionFormModal } from '@/features/transactions/TransactionFormModal';
@@ -176,6 +177,8 @@ export default function TransactionsPage() {
           </Button>
         </div>
       </div>
+
+      <MotivationalQuote category="transactions" className="mt-8" />
 
       <div className="mt-8">
         <TransactionFilters filters={filters} onChange={changeFilters} onClear={clearFilters} />

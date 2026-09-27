@@ -6,7 +6,10 @@ import { ROUTES } from '@/lib/constants';
 
 export default function LoginPage() {
   return (
-    <AuthShell
+    <>
+      {/* React 19 hoists this into <head>; gives /login a unique title vs the shared shell. */}
+      <title>Sign in — Finora AI</title>
+      <AuthShell
       title="Sign in"
       intro="Your balances, budgets, and goals are where you left them."
       footer={
@@ -23,5 +26,6 @@ export default function LoginPage() {
     >
       <LoginForm />
     </AuthShell>
+    </>
   );
 }

@@ -1,0 +1,8 @@
+# robots.txt — Finora AI
+# Public marketing surface is indexable; the authenticated product area is not.
+User-agent: *
+Allow: /
+Disallow: /app/
+Disallow: /verify-email
+
+Sitemap: https://finora-ai-jhs.vercel.app/sitemap.xml

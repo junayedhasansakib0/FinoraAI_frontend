@@ -8,6 +8,7 @@ import { ErrorState } from '@/components/states/ErrorState';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/context/auth-context';
 import { formatMoney, FALLBACK_CURRENCY } from '@/lib/format';
+import { MotivationalQuote } from '@/features/motivation/MotivationalQuote';
 import { BudgetFormModal } from './BudgetFormModal';
 import { BudgetProgressBar } from './BudgetProgressBar';
 import { DeleteBudgetModal } from './DeleteBudgetModal';
@@ -103,6 +104,8 @@ export function BudgetsPage() {
           </Button>
         </div>
       </div>
+
+      <MotivationalQuote category="budgets" />
 
       {isPending && (
         <div className="space-y-3">

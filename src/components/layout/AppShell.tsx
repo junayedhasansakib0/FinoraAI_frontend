@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router';
 
 import { Button } from '@/components/ui/Button';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useAuth } from '@/context/auth-context';
 import { UnverifiedEmailBanner } from '@/features/auth/UnverifiedEmailBanner';
 import { APP_NAME, ROUTES } from '@/lib/constants';
@@ -101,23 +102,29 @@ export function AppShell({ children }: { children: ReactNode }) {
         </nav>
         <div className="border-t border-line px-6 py-4">
           {identity}
-          {signOutButton}
+          <div className="flex items-center justify-between gap-3">
+            {signOutButton}
+            <ThemeToggle />
+          </div>
         </div>
       </aside>
 
       <header className="flex items-center justify-between border-b border-line px-4 py-3 lg:hidden">
         <span className="font-semibold tracking-tight">{APP_NAME}</span>
-        <button
-          type="button"
-          aria-expanded={drawerOpen}
-          aria-controls="app-drawer"
-          onClick={() => {
-            setDrawerOpen(true);
-          }}
-          className="border border-line px-3 py-1.5 text-sm transition-colors hover:border-ink"
-        >
-          Menu
-        </button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            type="button"
+            aria-expanded={drawerOpen}
+            aria-controls="app-drawer"
+            onClick={() => {
+              setDrawerOpen(true);
+            }}
+            className="border border-line px-3 py-1.5 text-sm transition-colors hover:border-ink"
+          >
+            Menu
+          </button>
+        </div>
       </header>
 
       {drawerOpen && (
@@ -129,7 +136,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             onClick={() => {
               setDrawerOpen(false);
             }}
-            className="absolute inset-0 bg-ink/40"
+            className="absolute inset-0 bg-scrim/40"
           />
           <div
             id="app-drawer"
@@ -156,7 +163,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             </nav>
             <div className="border-t border-line px-6 py-4">
               {identity}
-              {signOutButton}
+              <div className="flex items-center justify-between gap-3">
+                {signOutButton}
+                <ThemeToggle />
+              </div>
             </div>
           </div>
         </div>

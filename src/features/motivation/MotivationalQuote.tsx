@@ -57,7 +57,7 @@ export function MotivationalQuote({ category, className }: MotivationalQuoteProp
   const disclaimer = data?.disclaimer ?? QUOTE_FALLBACK_DISCLAIMER;
 
   const classes = [
-    'rounded-xl border border-line bg-white px-4 py-3.5 sm:px-5 sm:py-4',
+    'border border-line bg-paper px-4 py-3.5 sm:px-5 sm:py-4',
     className ?? '',
   ]
     .filter((part) => part !== '')

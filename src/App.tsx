@@ -6,6 +6,7 @@ import { RouteLoading } from '@/components/states/RouteLoading';
 import { SessionLoading } from '@/components/states/SessionLoading';
 import { AuthProvider } from '@/context/AuthContext';
 import { useAuth } from '@/context/auth-context';
+import { ThemeProvider } from '@/context/ThemeProvider';
 import { ProtectedRoute, PublicOnlyRoute } from '@/features/auth/RouteGuards';
 import { ROUTES } from '@/lib/constants';
 import { queryClient } from '@/lib/query-client';
@@ -74,12 +75,14 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AuthProvider>
-          <AppRoutes />
-        </AuthProvider>
-      </BrowserRouter>
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <AuthProvider>
+            <AppRoutes />
+          </AuthProvider>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }

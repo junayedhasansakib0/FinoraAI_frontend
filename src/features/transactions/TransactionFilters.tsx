@@ -63,7 +63,7 @@ export function TransactionFilters({ filters, onChange, onClear }: TransactionFi
   }
 
   return (
-    <section aria-labelledby={headingId} className="border border-line bg-white p-5 sm:p-6">
+    <section aria-labelledby={headingId} className="border border-line bg-paper p-5 sm:p-6">
       <div className="flex items-baseline justify-between gap-4">
         <h2 id={headingId} className="text-sm font-medium">
           Filters

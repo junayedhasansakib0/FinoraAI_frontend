@@ -2,7 +2,7 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 
 import { ChartFrame } from '@/components/charts/ChartFrame';
 import { ChartTooltip } from '@/components/charts/ChartTooltip';
-import { CATEGORY_COLORS, CHART_PAPER, REMAINDER_COLOR } from '@/components/charts/colors';
+import { useChartColors } from '@/components/charts/colors';
 import { formatMoney, formatMonthLong, formatPercent } from '@/lib/format';
 
 import type { ChartTableRow } from '@/components/charts/ChartFrame';
@@ -47,6 +47,7 @@ function sliceLines(amount: string, share: string | null) {
  * share, so no slice is identified by colour alone.
  */
 export function CategoryBreakdownChart({ breakdown, currency }: CategoryBreakdownChartProps) {
+  const chart = useChartColors();
   const monthName = formatMonthLong(breakdown.month, breakdown.year);
 
   const slices: Slice[] = breakdown.categories.map((category, index) => {
@@ -58,7 +59,7 @@ export function CategoryBreakdownChart({ breakdown, currency }: CategoryBreakdow
       key: category.categoryId ?? UNCATEGORISED,
       label,
       value: Number(category.total),
-      color: CATEGORY_COLORS.at(index % CATEGORY_COLORS.length) ?? REMAINDER_COLOR,
+      color: chart.categories.at(index % chart.categories.length) ?? chart.remainder,
       amount,
       share,
       tipLabel: label,
@@ -76,7 +77,7 @@ export function CategoryBreakdownChart({ breakdown, currency }: CategoryBreakdow
       key: 'other',
       label,
       value: Number(breakdown.other.total),
-      color: REMAINDER_COLOR,
+      color: chart.remainder,
       amount,
       share: null,
       tipLabel: label,
@@ -148,7 +149,7 @@ export function CategoryBreakdownChart({ breakdown, currency }: CategoryBreakdow
             outerRadius="88%"
             paddingAngle={1}
             /* The paper colour, so the gap between slices reads as a gap rather than a grey ring. */
-            stroke={CHART_PAPER}
+            stroke={chart.paper}
             strokeWidth={2}
             isAnimationActive={false}
           >

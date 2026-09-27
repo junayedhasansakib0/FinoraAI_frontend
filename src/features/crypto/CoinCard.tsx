@@ -17,7 +17,7 @@ export function CoinCard({ coin }: { coin: CryptoCoin }) {
   const changeText = formatChange(coin.change24h);
 
   return (
-    <div className="flex flex-col gap-4 rounded border border-line bg-surface p-5 shadow-2xs">
+    <div className="flex flex-col gap-4 border border-line bg-paper p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <span

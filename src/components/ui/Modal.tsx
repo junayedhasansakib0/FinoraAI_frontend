@@ -69,7 +69,7 @@ export function Modal({ open, title, onClose, children }: ModalProps) {
       ref={dialogRef}
       aria-labelledby={headingId}
       // Tailwind's preflight drops the user-agent `margin: auto`, so the centring is restored here.
-      className="m-auto max-h-[85dvh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto border border-ink bg-paper text-ink backdrop:bg-ink/40"
+      className="m-auto max-h-[85dvh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto border border-ink bg-paper text-ink backdrop:bg-scrim/40"
     >
       <div className="flex items-baseline justify-between gap-6 border-b border-line px-6 py-4">
         <h2 id={headingId} className="font-serif text-xl">

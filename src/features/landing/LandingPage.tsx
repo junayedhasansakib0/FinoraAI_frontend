@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
 
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useAuth } from '@/context/auth-context';
 import { APP_NAME, ROUTES } from '@/lib/constants';
 
@@ -50,7 +51,9 @@ export function LandingPage() {
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-6 px-6 py-4">
           <span className="font-semibold tracking-tight">{APP_NAME}</span>
 
-          <nav aria-label="Account" className="flex items-center gap-5 text-sm">
+          <div className="flex items-center gap-4 sm:gap-5">
+            <ThemeToggle />
+            <nav aria-label="Account" className="flex items-center gap-5 text-sm">
             {user === null ? (
               <>
                 <Link
@@ -74,7 +77,8 @@ export function LandingPage() {
                 Go to dashboard
               </Link>
             )}
-          </nav>
+            </nav>
+          </div>
         </div>
       </header>
 

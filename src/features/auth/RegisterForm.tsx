@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router';
 
 import { registerAccount } from '@/api/auth';
 import { describeApiFailure, describeFieldErrors } from '@/api/client';
+import { Button } from '@/components/ui/Button';
 import { TextField } from '@/components/ui/TextField';
 import { useAuth } from '@/context/auth-context';
 import { ROUTES } from '@/lib/constants';
@@ -142,13 +143,9 @@ export function RegisterForm() {
         </p>
       )}
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full border border-ink bg-ink px-4 py-3 text-sm font-medium text-paper transition-colors hover:bg-ink-soft disabled:cursor-not-allowed disabled:opacity-40"
-      >
+      <Button type="submit" variant="primary" size="lg" fullWidth disabled={isSubmitting}>
         {isSubmitting ? 'Creating account…' : 'Create account'}
-      </button>
+      </Button>
     </form>
   );
 }

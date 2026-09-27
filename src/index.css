@@ -12,18 +12,54 @@
   --text-display--line-height: 1.05;
   --text-display--letter-spacing: -0.02em;
 
+  /* Two-layer surfaces give the interface depth without shadows: `canvas` is the page floor,
+     `paper` the raised sheet a card or panel sits on. In light they sit a hair apart; the lift
+     is carried mostly by the hairline `line`. In dark (below) the gap widens so a card reads as
+     lifted rather than as a hole cut in the page. */
+  --color-canvas: #eef1f2;
+  --color-paper: #f9fafa;
+
   /* Petrol ink — the brand's near-black, cool rather than warm. */
   --color-ink: #0c2a31;
   --color-ink-soft: #123a47;
   --color-muted: #4f7078;
   --color-line: #c4d2d5;
-  --color-paper: #f5f6f7;
-  --color-brass: #c9a227;
+  --color-brass: #b9860b;
+
+  /* The overlay behind modals and the mobile drawer. A scrim dims what is behind it, so it stays
+     this dark petrol in both themes — it is deliberately NOT redefined under data-theme="dark"
+     (where `ink` flips to near-white and would haze the content pale instead of dimming it). */
+  --color-scrim: #0c2a31;
 
   /* Money direction. These three carry meaning and are never used as decoration. */
   --color-income: #0e7a5f;
   --color-expense: #a8322a;
   --color-warning: #b25e09;
+}
+
+/**
+ * Dark theme — a premium, calm financial surface. The base is a deep blue-gray charcoal (not teal,
+ * not pure black); surfaces step up in lightness rather than relying on shadow; borders stay
+ * quiet; text is a soft off-white, never a harsh pure white. The interface is built almost entirely
+ * from the semantic tokens above (bg-canvas, bg-paper, text-ink, text-muted, border-line, …), which
+ * Tailwind compiles to `var(--color-*)`, so redefining the same variables here re-skins every
+ * surface at once — no per-component dark: variants. The concrete value is set by the theme provider
+ * (and the pre-hydration script in index.html), so this selector only matches the value a person
+ * chose. Chart hues, which live in SVG attributes that cannot read a CSS variable, are themed in
+ * parallel from `components/charts/colors.ts`.
+ */
+:root[data-theme='dark'] {
+  --color-canvas: #11151b;
+  --color-paper: #181e26;
+  --color-ink: #e6e9ec;
+  --color-ink-soft: #bcc4cb;
+  --color-muted: #8a939d;
+  --color-line: #2b323c;
+  --color-brass: #d8b45c;
+
+  --color-income: #4faf8a;
+  --color-expense: #db8073;
+  --color-warning: #d69b46;
 }
 
 @layer base {
@@ -32,19 +68,40 @@
   }
 
   body {
-    background-color: var(--color-paper);
+    background-color: var(--color-canvas);
     color: var(--color-ink);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
 
+  /* One visible, consistent keyboard focus for everything, in both themes (ink is near-white on
+     dark, so the ring stays high-contrast either way). Pointer clicks don't trigger it. */
   :focus-visible {
     outline: 2px solid var(--color-ink);
     outline-offset: 2px;
+    border-radius: 1px;
   }
 
   ::selection {
     background-color: var(--color-brass);
     color: var(--color-ink);
+  }
+
+  /* On dark, ink is near-white, which would sit palely on the brass highlight — pin the text dark. */
+  :root[data-theme='dark'] ::selection {
+    color: var(--color-canvas);
+  }
+
+  /* Honour a reduced-motion preference everywhere: transitions and animations collapse to a near-
+     instant change rather than being removed, so state still updates but nothing moves. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }

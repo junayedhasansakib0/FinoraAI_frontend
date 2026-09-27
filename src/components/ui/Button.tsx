@@ -15,11 +15,11 @@ interface ButtonProps extends Omit<ComponentPropsWithRef<'button'>, 'className'>
  * auth pages already hand-rolled, in one place now that four screens need them.
  */
 const VARIANT_CLASS: Record<ButtonVariant, string> = {
-  primary: 'border border-ink bg-ink font-medium text-paper hover:bg-ink-soft',
-  secondary: 'border border-ink font-medium hover:bg-ink hover:text-paper',
-  quiet: 'border border-line hover:border-ink',
-  danger: 'border border-expense bg-expense font-medium text-paper hover:bg-expense/90',
-  text: 'text-muted underline decoration-line underline-offset-4 hover:text-ink',
+  primary: 'border border-ink bg-ink font-medium text-paper hover:bg-ink-soft active:bg-ink',
+  secondary: 'border border-ink font-medium hover:bg-ink hover:text-paper active:bg-ink-soft active:text-paper',
+  quiet: 'border border-line hover:border-ink active:bg-line/20',
+  danger: 'border border-expense bg-expense font-medium text-paper hover:bg-expense/90 active:bg-expense',
+  text: 'text-muted underline decoration-line underline-offset-4 hover:text-ink active:text-ink',
 };
 
 /** `text` pays no border, so it keeps only the vertical rhythm and none of the side padding. */

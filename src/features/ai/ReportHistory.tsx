@@ -41,8 +41,8 @@ export function ReportHistory() {
 
       {isPending && (
         <div className="space-y-3">
-          <div className="h-12 w-full animate-pulse rounded bg-line/20" />
-          <div className="h-12 w-full animate-pulse rounded bg-line/20" />
+          <div className="h-12 w-full motion-safe:animate-pulse rounded bg-line/20" />
+          <div className="h-12 w-full motion-safe:animate-pulse rounded bg-line/20" />
         </div>
       )}
 

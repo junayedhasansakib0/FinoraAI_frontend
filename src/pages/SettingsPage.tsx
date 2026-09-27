@@ -1,6 +1,7 @@
 import { AppShell } from '@/components/layout/AppShell';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/context/auth-context';
+import { AppearanceForm } from '@/features/settings/AppearanceForm';
 import { PasswordForm } from '@/features/settings/PasswordForm';
 import { ProfileForm } from '@/features/settings/ProfileForm';
 
@@ -39,6 +40,13 @@ export default function SettingsPage() {
             Your account details and how the app displays your money.
           </p>
         </header>
+
+        <SettingsSection
+          title="Appearance"
+          description="Choose a light or dark theme, or match your device. This is saved on this device only."
+        >
+          <AppearanceForm />
+        </SettingsSection>
 
         {user === null ? null : (
           <>

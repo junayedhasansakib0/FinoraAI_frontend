@@ -73,7 +73,7 @@ export function BudgetsPage() {
               aria-label="Filter by month"
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(Number(e.target.value))}
-              className="rounded border border-line bg-surface px-3 py-1.5 text-sm font-medium text-ink shadow-xs focus:border-ink focus:outline-hidden"
+              className="border border-line bg-paper px-3 py-1.5 text-sm font-medium text-ink focus:border-ink"
             >
               {MONTHS.map((m) => (
                 <option key={m.value} value={m.value}>
@@ -86,7 +86,7 @@ export function BudgetsPage() {
               aria-label="Filter by year"
               value={selectedYear}
               onChange={(e) => setSelectedYear(Number(e.target.value))}
-              className="rounded border border-line bg-surface px-3 py-1.5 text-sm font-medium text-ink shadow-xs focus:border-ink focus:outline-hidden"
+              className="border border-line bg-paper px-3 py-1.5 text-sm font-medium text-ink focus:border-ink"
             >
               {YEARS.map((y) => (
                 <option key={y} value={y}>
@@ -109,9 +109,9 @@ export function BudgetsPage() {
 
       {isPending && (
         <div className="space-y-3">
-          <div className="h-12 w-full animate-pulse rounded bg-line/30" />
-          <div className="h-20 w-full animate-pulse rounded bg-line/20" />
-          <div className="h-20 w-full animate-pulse rounded bg-line/20" />
+          <div className="h-12 w-full motion-safe:animate-pulse rounded bg-line/30" />
+          <div className="h-20 w-full motion-safe:animate-pulse rounded bg-line/20" />
+          <div className="h-20 w-full motion-safe:animate-pulse rounded bg-line/20" />
         </div>
       )}
 
@@ -140,7 +140,7 @@ export function BudgetsPage() {
       {!isPending && error === null && (budgets?.length ?? 0) > 0 && (
         <>
           {/* Desktop & Tablet Table (≥768px) */}
-          <div className="hidden md:block overflow-x-auto rounded border border-line bg-surface shadow-2xs">
+          <div className="hidden md:block overflow-x-auto border border-line bg-paper">
             <table className="w-full border-collapse text-left text-sm">
               <thead>
                 <tr className="border-b border-line bg-paper text-xs uppercase tracking-wider text-muted">
@@ -189,7 +189,7 @@ export function BudgetsPage() {
                         <span
                           className={
                             Number(budget.remaining) < 0
-                              ? 'font-medium text-rose-600'
+                              ? 'font-medium text-expense'
                               : 'text-ink'
                           }
                         >
@@ -239,7 +239,7 @@ export function BudgetsPage() {
               return (
                 <div
                   key={budget.id}
-                  className="rounded border border-line bg-surface p-4 shadow-2xs space-y-3"
+                  className="border border-line bg-paper p-4 space-y-3"
                 >
                   <div className="flex items-start justify-between">
                     <div>
@@ -288,7 +288,7 @@ export function BudgetsPage() {
                       <span
                         className={
                           Number(budget.remaining) < 0
-                            ? 'font-medium text-rose-600'
+                            ? 'font-medium text-expense'
                             : 'font-medium text-ink'
                         }
                       >

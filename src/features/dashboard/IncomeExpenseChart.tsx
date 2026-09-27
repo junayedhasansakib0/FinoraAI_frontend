@@ -10,7 +10,7 @@ import {
 
 import { ChartFrame } from '@/components/charts/ChartFrame';
 import { ChartTooltip } from '@/components/charts/ChartTooltip';
-import { CHART_LINE, CHART_TEXT, SERIES_COLORS } from '@/components/charts/colors';
+import { useChartColors } from '@/components/charts/colors';
 import { formatAxisAmount, formatMoney, formatMonthLong, formatMonthShort } from '@/lib/format';
 
 import type { ChartTableRow } from '@/components/charts/ChartFrame';
@@ -34,6 +34,8 @@ interface BarDatum extends TooltipDatum {
  * names them so the pairing does not rest on colour alone.
  */
 export function IncomeExpenseChart({ series, currency }: IncomeExpenseChartProps) {
+  const chart = useChartColors();
+
   const data: BarDatum[] = series.map((point) => ({
     label: formatMonthShort(point.month, point.year),
     /**
@@ -79,8 +81,8 @@ export function IncomeExpenseChart({ series, currency }: IncomeExpenseChartProps
       legend={
         <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
           {[
-            { label: 'Income', color: SERIES_COLORS.income },
-            { label: 'Expenses', color: SERIES_COLORS.expense },
+            { label: 'Income', color: chart.series.income },
+            { label: 'Expenses', color: chart.series.expense },
           ].map((entry) => (
             <li key={entry.label} className="flex items-center gap-2">
               <span
@@ -106,33 +108,33 @@ export function IncomeExpenseChart({ series, currency }: IncomeExpenseChartProps
           accessibilityLayer={false}
           margin={{ top: 4, right: 4, left: 0, bottom: 0 }}
         >
-          <CartesianGrid vertical={false} stroke={CHART_LINE} />
+          <CartesianGrid vertical={false} stroke={chart.line} />
           <XAxis
             dataKey="label"
             tickLine={false}
-            axisLine={{ stroke: CHART_LINE }}
-            tick={{ fill: CHART_TEXT, fontSize: 12 }}
+            axisLine={{ stroke: chart.line }}
+            tick={{ fill: chart.text, fontSize: 12 }}
           />
           <YAxis
             width={48}
             tickLine={false}
             axisLine={false}
             tickFormatter={formatAxisAmount}
-            tick={{ fill: CHART_TEXT, fontSize: 12 }}
+            tick={{ fill: chart.text, fontSize: 12 }}
           />
-          <Tooltip content={ChartTooltip} cursor={{ fill: CHART_LINE, fillOpacity: 0.35 }} />
+          <Tooltip content={ChartTooltip} cursor={{ fill: chart.line, fillOpacity: 0.35 }} />
           {/* Animation stays off: it would replay on every refetch, and it answers no one's action. */}
           <Bar
             dataKey="income"
             name="Income"
-            fill={SERIES_COLORS.income}
+            fill={chart.series.income}
             maxBarSize={28}
             isAnimationActive={false}
           />
           <Bar
             dataKey="expense"
             name="Expenses"
-            fill={SERIES_COLORS.expense}
+            fill={chart.series.expense}
             maxBarSize={28}
             isAnimationActive={false}
           />

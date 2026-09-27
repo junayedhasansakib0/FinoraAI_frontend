@@ -43,7 +43,7 @@ export function DeleteGoalModal({ goal, currency, onClose, onDeleted }: DeleteGo
         {failure !== null && (
           <div
             role="alert"
-            className="rounded border border-red-300 bg-red-50 p-3 text-sm text-red-800"
+            className="border border-expense/40 bg-expense/10 p-3 text-sm text-expense"
           >
             {failure}
           </div>

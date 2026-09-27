@@ -1,3 +1,4 @@
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { APP_NAME } from '@/lib/constants';
 
 import type { ReactNode } from 'react';
@@ -16,8 +17,9 @@ export function AuthShell({ title, intro, children, footer }: AuthShellProps) {
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="border-b border-line">
-        <div className="mx-auto w-full max-w-md px-6 py-4">
+        <div className="mx-auto flex w-full max-w-md items-center justify-between px-6 py-4">
           <span className="font-semibold tracking-tight">{APP_NAME}</span>
+          <ThemeToggle />
         </div>
       </header>
 

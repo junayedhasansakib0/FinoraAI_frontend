@@ -114,9 +114,9 @@ export function CurrencyPage() {
 
       {ratesQuery.isPending && (
         <div className="max-w-md space-y-4">
-          <div className="h-10 w-full animate-pulse rounded bg-line/20" />
-          <div className="h-10 w-full animate-pulse rounded bg-line/20" />
-          <div className="h-10 w-full animate-pulse rounded bg-line/20" />
+          <div className="h-10 w-full motion-safe:animate-pulse rounded bg-line/20" />
+          <div className="h-10 w-full motion-safe:animate-pulse rounded bg-line/20" />
+          <div className="h-10 w-full motion-safe:animate-pulse rounded bg-line/20" />
         </div>
       )}
 

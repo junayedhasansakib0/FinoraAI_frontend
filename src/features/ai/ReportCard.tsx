@@ -85,9 +85,9 @@ export function ReportCard({
       <div className="mt-5 flex-1">
         {mutation.isPending && (
           <div className="space-y-3">
-            <div className="h-4 w-3/4 animate-pulse rounded bg-line/20" />
-            <div className="h-4 w-full animate-pulse rounded bg-line/20" />
-            <div className="h-4 w-2/3 animate-pulse rounded bg-line/20" />
+            <div className="h-4 w-3/4 motion-safe:animate-pulse rounded bg-line/20" />
+            <div className="h-4 w-full motion-safe:animate-pulse rounded bg-line/20" />
+            <div className="h-4 w-2/3 motion-safe:animate-pulse rounded bg-line/20" />
           </div>
         )}
 

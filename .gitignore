@@ -1,6 +1,9 @@
 # Dependencies
 node_modules/
 
+.agents
+.claude
+
 # Environment — only the example file is committed
 .env
 .env.*
@@ -15,6 +18,9 @@ dist-ssr/
 .vite/
 coverage/
 
+# Local scratch — UI verification screenshots, agent-browser captures
+.ui-verify/
+
 # Editors and OS
 .idea/
 .vscode/*
@@ -25,3 +31,5 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+
+skills-lock.json

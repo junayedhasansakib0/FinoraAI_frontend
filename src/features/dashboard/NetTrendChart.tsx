@@ -11,7 +11,7 @@ import {
 
 import { ChartFrame } from '@/components/charts/ChartFrame';
 import { ChartTooltip } from '@/components/charts/ChartTooltip';
-import { CHART_LINE, CHART_TEXT, SERIES_COLORS } from '@/components/charts/colors';
+import { useChartColors } from '@/components/charts/colors';
 import { formatAxisAmount, formatMoney, formatMonthLong, formatMonthShort } from '@/lib/format';
 
 import type { ChartTableRow } from '@/components/charts/ChartFrame';
@@ -37,6 +37,8 @@ interface AreaDatum extends TooltipDatum {
  * which side of nothing the line is on.
  */
 export function NetTrendChart({ series, currency }: NetTrendChartProps) {
+  const chart = useChartColors();
+
   const data: AreaDatum[] = series.map((point) => ({
     label: formatMonthShort(point.month, point.year),
     /** A coordinate, and the only number derived from an amount on this screen (R-B3). */
@@ -77,32 +79,32 @@ export function NetTrendChart({ series, currency }: NetTrendChartProps) {
           accessibilityLayer={false}
           margin={{ top: 4, right: 4, left: 0, bottom: 0 }}
         >
-          <CartesianGrid vertical={false} stroke={CHART_LINE} />
+          <CartesianGrid vertical={false} stroke={chart.line} />
           <XAxis
             dataKey="label"
             tickLine={false}
-            axisLine={{ stroke: CHART_LINE }}
-            tick={{ fill: CHART_TEXT, fontSize: 12 }}
+            axisLine={{ stroke: chart.line }}
+            tick={{ fill: chart.text, fontSize: 12 }}
           />
           <YAxis
             width={48}
             tickLine={false}
             axisLine={false}
             tickFormatter={formatAxisAmount}
-            tick={{ fill: CHART_TEXT, fontSize: 12 }}
+            tick={{ fill: chart.text, fontSize: 12 }}
           />
           {/* Without this a balance below zero would read as a small positive one. */}
-          <ReferenceLine y={0} stroke={CHART_TEXT} />
-          <Tooltip content={ChartTooltip} cursor={{ stroke: CHART_TEXT }} />
+          <ReferenceLine y={0} stroke={chart.text} />
+          <Tooltip content={ChartTooltip} cursor={{ stroke: chart.text }} />
           <Area
             type="linear"
             dataKey="balance"
             name="Balance"
-            stroke={SERIES_COLORS.balance}
+            stroke={chart.series.balance}
             strokeWidth={2}
-            fill={SERIES_COLORS.balance}
+            fill={chart.series.balance}
             fillOpacity={0.12}
-            dot={{ r: 3, fill: SERIES_COLORS.balance, strokeWidth: 0 }}
+            dot={{ r: 3, fill: chart.series.balance, strokeWidth: 0 }}
             isAnimationActive={false}
           />
         </AreaChart>

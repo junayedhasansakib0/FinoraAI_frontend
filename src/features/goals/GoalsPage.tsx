@@ -67,9 +67,9 @@ export function GoalsPage() {
 
       {isPending && (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="h-44 w-full animate-pulse rounded bg-line/20" />
-          <div className="h-44 w-full animate-pulse rounded bg-line/20" />
-          <div className="h-44 w-full animate-pulse rounded bg-line/20" />
+          <div className="h-44 w-full motion-safe:animate-pulse rounded bg-line/20" />
+          <div className="h-44 w-full motion-safe:animate-pulse rounded bg-line/20" />
+          <div className="h-44 w-full motion-safe:animate-pulse rounded bg-line/20" />
         </div>
       )}
 
@@ -100,7 +100,7 @@ export function GoalsPage() {
           {goals?.map((goal) => (
             <div
               key={goal.id}
-              className="flex flex-col gap-4 rounded border border-line bg-surface p-5 shadow-2xs"
+              className="flex flex-col gap-4 border border-line bg-paper p-5"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">

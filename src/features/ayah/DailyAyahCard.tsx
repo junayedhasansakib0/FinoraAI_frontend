@@ -14,10 +14,11 @@ import { ayahReference, dailyIndex, nextIndex } from './select-ayah';
  * The card is intentionally isolated from `DashboardPage`: it owns its own state and data and is
  * dropped in as a single element, so the finance view carries no reflection logic.
  *
- * Visual: a boxed surface (rounded, hairline `border-line`, a faint lift) sitting at the top of the
- * dashboard. All colour comes from the design tokens, so it follows the theme rather than pinning
- * its own palette. The Arabic is deliberately restrained in size — legible with room for the
- * harakat, but small enough that the card never pushes the financial summary far down the page.
+ * Visual: a boxed surface (hairline `border-line`, sitting on the raised `paper` layer above the
+ * page canvas) at the top of the dashboard. All colour comes from the design tokens, so it follows
+ * the theme rather than pinning its own palette. The Arabic is deliberately restrained in size —
+ * legible with room for the harakat, but small enough that the card never pushes the financial
+ * summary far down the page.
  */
 export function DailyAyahCard() {
   // Empty set → render nothing rather than an empty frame. Defensive; the bundle is non-empty.
@@ -32,7 +33,7 @@ export function DailyAyahCard() {
   return (
     <section
       aria-labelledby="ayah-heading"
-      className="rounded-2xl border border-line bg-white p-5 shadow-sm sm:p-6"
+      className="border border-line bg-paper p-5 sm:p-6"
     >
       <p
         id="ayah-heading"

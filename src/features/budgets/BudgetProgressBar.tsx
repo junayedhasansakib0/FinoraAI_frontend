@@ -17,18 +17,18 @@ const STATUS_CONFIG: Record<
   }
 > = {
   ok: {
-    fillClass: 'bg-emerald-600',
-    badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    fillClass: 'bg-income',
+    badgeClass: 'border-income/30 bg-income/10 text-income',
     label: 'On Track',
   },
   warning: {
-    fillClass: 'bg-amber-500',
-    badgeClass: 'bg-amber-50 text-amber-800 border-amber-200',
+    fillClass: 'bg-warning',
+    badgeClass: 'border-warning/30 bg-warning/10 text-warning',
     label: 'Warning (≥80%)',
   },
   exceeded: {
-    fillClass: 'bg-rose-600',
-    badgeClass: 'bg-rose-50 text-rose-700 border-rose-200',
+    fillClass: 'bg-expense',
+    badgeClass: 'border-expense/30 bg-expense/10 text-expense',
     label: 'Exceeded (>100%)',
   },
 };
@@ -64,7 +64,7 @@ export function BudgetProgressBar({
         className="h-2 w-full overflow-hidden rounded-full bg-line/40"
       >
         <div
-          className={`h-full rounded-full transition-all duration-300 ${config.fillClass}`}
+          className={`h-full rounded-full transition-all duration-200 ${config.fillClass}`}
           style={{ width: `${clampedPercent}%` }}
         />
       </div>
